@@ -115,10 +115,20 @@ Output: `dist/athan-tv-<version>.wgt` (the version comes from `tizen-app/config.
 
 > **4K note:** on UHD TVs the Tizen web engine renders every web app at a
 > 1080p logical surface and the system upscales it — native 4K raster is not
-> reachable from web apps. Keep UI transforms on integer pixels (the OLED drift
-> already `Math.round`s) and avoid CSS transitions on `transform` for
-> full-screen panels: animated fractional-pixel interpolation visibly softens
-> text after each drift step.
+> reachable from web apps. (Proven on-device 2026-11: the diagnostic in
+> Settings reports `UI 1920×1080 · screen 1920×1080` even on a 4K panel — the
+> web environment literally does not know about UHD. Nuvio/Netflix "4K" is the
+> hardware video-decoder plane, not app UI.) Keep UI transforms on integer pixels
+> (the OLED drift already `Math.round`s) and avoid CSS transitions on
+> `transform` for full-screen panels: animated fractional-pixel interpolation
+> visibly softens text after each drift step.
+
+> **Background experiment (`--bg`):** `node tools\build-wgt.js --bg` builds
+> `dist/athan-tv-bg-<x>.wgt` — the same app under a fresh sacrificial package
+> id with `background-support="enable"`, to test on-device whether Samsung's
+> loader accepts a self-signed enable and whether timers survive on the Home
+> screen. If the install is rejected the sacrificial id burns, never the real
+> `AthanTizen.AthanTizen`.
 
 ---
 

@@ -2,6 +2,9 @@
  * Builds an unsigned Tizen .wgt (a ZIP with config.xml at the root).
  * Usage: node tools/build-wgt.js          → dist/athan-tv-<version>.wgt
  *        node tools/build-wgt.js --probe  → dist/athan-tv-probe.wgt (3-file diagnostic)
+ *        node tools/build-wgt.js --bg     → dist/athan-tv-bg-1.2.0.wgt (sacrificial
+ *                                          experiment package: fresh id +
+ *                                          background-support="enable")
  *
  * HARD RULES for tizen-app/config.xml — proven on-device (TV TQ65S90CA via
  * Apps2Samsung v3.2.0-beta, Nov 2026). The TV rejects the install with
@@ -209,6 +212,36 @@ function stageProbe() {
     return dir;
 }
 
+/* Sacrificial background experiment: full app under a FRESH package id with
+   background-support="enable". If the TV's loader rejects it the id burns,
+   never the shipped AthanTizen.AthanTizen. Answers two open questions:
+   (1) does this Samsung build accept a self-signed "enable" manifest at all,
+   (2) do web-app timers keep firing while the app is hidden on the Home screen. */
+function stageBg() {
+    const dir = path.join(ROOT, ".cache", "bg-app");
+    fs.rmSync(dir, { recursive: true, force: true });
+    for (const file of walk(APP_DIR, "")) {
+        const dest = path.join(dir, file.name);
+        fs.mkdirSync(path.dirname(dest), { recursive: true });
+        if (file.name === "config.xml") {
+            let config = fs.readFileSync(file.full, "utf8");
+            config = config
+                .replace('version="1.1.7"', 'version="1.2.0"')
+                .replace('id="AthanTizen.AthanTizen" package="AthanTizen"', 'id="AthanTvB.AthanTvB" package="AthanTvB"')
+                .replace("<name>Athan TV</name>", "<name>Athan TV BG</name>")
+                .replace("Prayer times and adhan on your Samsung TV.", "Background experiment build (sacrificial id).")
+                .replace('background-support="disable"', 'background-support="enable"');
+            if (config.includes("AthanTizen.AthanTizen") || !config.includes("background-support=\"enable\"")) {
+                throw new Error("bg config patch failed — check tizen-app/config.xml anchors.");
+            }
+            fs.writeFileSync(dest, config, "utf8");
+        } else {
+            fs.copyFileSync(file.full, dest);
+        }
+    }
+    return dir;
+}
+
 function buildPackage(appDir, outName) {
     assertManifestSafe(appDir);
     const version = readVersion(appDir);
@@ -234,6 +267,8 @@ function buildPackage(appDir, outName) {
 function main() {
     if (process.argv.includes("--probe")) {
         buildPackage(stageProbe(), "athan-tv-probe.wgt");
+    } else if (process.argv.includes("--bg")) {
+        buildPackage(stageBg(), "athan-tv-bg-1.2.0.wgt");
     } else {
         buildPackage(APP_DIR);
     }
