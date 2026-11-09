@@ -72,7 +72,7 @@ function buildZip(entries) {
         const local = Buffer.alloc(30);
         local.writeUInt32LE(0x04034b50, 0);
         local.writeUInt16LE(20, 4);
-        local.writeUInt16LE(0x0800, 6);
+        local.writeUInt16LE(0, 6);
         local.writeUInt16LE(8, 8);
         local.writeUInt16LE(stamp.time, 10);
         local.writeUInt16LE(stamp.date, 12);
@@ -88,7 +88,7 @@ function buildZip(entries) {
         central.writeUInt32LE(0x02014b50, 0);
         central.writeUInt16LE(20, 4);
         central.writeUInt16LE(20, 6);
-        central.writeUInt16LE(0x0800, 8);
+        central.writeUInt16LE(0, 8);
         central.writeUInt16LE(8, 10);
         central.writeUInt16LE(stamp.time, 12);
         central.writeUInt16LE(stamp.date, 14);
@@ -121,15 +121,53 @@ function buildZip(entries) {
     return Buffer.concat(localParts.concat([centralBuffer, end]));
 }
 
-function readVersion() {
-    const config = fs.readFileSync(path.join(APP_DIR, "config.xml"), "utf8");
+function readVersion(appDir) {
+    const config = fs.readFileSync(path.join(appDir, "config.xml"), "utf8");
     const match = config.match(/<widget[^>]*\sversion="([^"]+)"/);
     return match ? match[1] : "1.0.0";
 }
 
-function main() {
-    const version = readVersion();
-    const files = walk(APP_DIR, "");
+/* Probe package: byte-for-byte the same manifest DNA as the app, minimal
+   payload. If the install tool refuses even this, the problem is not the
+   app's content. */
+const PROBE_CONFIG = `<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="https://athantv.app/tizen" version="1.0.0" viewmodes="maximized">
+    <tizen:application id="AthanProbe.AthanProbe" package="AthanProbe" required_version="2.3"/>
+    <name>Athan TV Probe</name>
+    <author href="https://athantv.app">Athan TV</author>
+    <description>Install probe.</description>
+    <content src="index.html"/>
+    <icon src="icon.png"/>
+    <feature name="http://tizen.org/feature/screen.size.all"/>
+    <access origin="*" subdomains="true"/>
+    <tizen:privilege name="http://tizen.org/privilege/internet"/>
+    <tizen:profile name="tv-samsung"/>
+    <tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable" encryption="disable" install-location="auto" hwkey-event="enable"/>
+</widget>
+`;
+
+const PROBE_INDEX = `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Athan TV Probe</title></head>
+<body style="background:#111;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0">
+<h1>Athan TV Probe OK</h1>
+</body>
+</html>
+`;
+
+function stageProbe() {
+    const dir = path.join(ROOT, ".cache", "probe-app");
+    fs.rmSync(dir, { recursive: true, force: true });
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, "config.xml"), PROBE_CONFIG, "utf8");
+    fs.writeFileSync(path.join(dir, "index.html"), PROBE_INDEX, "utf8");
+    fs.copyFileSync(path.join(APP_DIR, "icon.png"), path.join(dir, "icon.png"));
+    return dir;
+}
+
+function buildPackage(appDir, outName) {
+    const version = readVersion(appDir);
+    const files = walk(appDir, "");
 
     // config.xml must be the first entry for Tizen tooling.
     files.sort((a, b) => {
@@ -139,13 +177,21 @@ function main() {
     });
 
     fs.mkdirSync(DIST_DIR, { recursive: true });
-    const output = path.join(DIST_DIR, "athan-tv-" + version + ".wgt");
+    const output = path.join(DIST_DIR, outName || "athan-tv-" + version + ".wgt");
     fs.writeFileSync(output, buildZip(files));
 
     const size = fs.statSync(output).size;
     console.log("Built " + output);
     console.log("Files: " + files.length + " · Size: " + (size / 1024).toFixed(1) + " KB");
     console.log("This package is unsigned. See README.md for signing/installation.");
+}
+
+function main() {
+    if (process.argv.includes("--probe")) {
+        buildPackage(stageProbe(), "athan-tv-probe.wgt");
+    } else {
+        buildPackage(APP_DIR);
+    }
 }
 
 main();

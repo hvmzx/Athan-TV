@@ -1,39 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets"
-        xmlns:tizen="http://tizen.org/ns/widgets"
-        id="http://athantv.app/AthanTV"
-        version="1.1.1"
-        viewmodes="maximized">
-
-    <tizen:application id="athanTv.app" package="athanTv" required_version="2.3"/>
-
-    <content src="index.html"/>
-
-    <feature name="http://tizen.org/feature/screen.size.all"/>
-    <feature name="http://tizen.org/feature/network.internet"/>
-
-    <icon src="icon.png"/>
+<!-- Manifest order and elements mirror the two packages proven to install on
+     this TV with the same signer: NuvioTV001 and FreeMyTVio.
+     Do NOT add anything back without a proven need:
+     - background-support="enable" is partner-level on tv-samsung -> [118, -4]
+     - required_version > the TV platform blocks the install outright
+     - the network.internet feature is declared by neither working app -->
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="https://athantv.app/tizen" version="1.1.2" viewmodes="maximized">
+    <tizen:application id="AthanTV.AthanTV" package="AthanTV" required_version="2.3"/>
     <name>Athan TV</name>
-    <description>Prayer times and adhan notifications on your Samsung TV.</description>
-    <author href="https://athantv.app" email="contact@athantv.app">Athan TV</author>
-
+    <author href="https://athantv.app">Athan TV</author>
+    <description>Prayer times and adhan on your Samsung TV.</description>
+    <content src="index.html"/>
+    <icon src="icon.png"/>
+    <feature name="http://tizen.org/feature/screen.size.all"/>
     <access origin="*" subdomains="true"/>
-
-    <tizen:profile name="tv-samsung"/>
-
-    <!-- Public-level privileges only: anything the signer is not entitled to
-         makes the TV refuse the package with install error [118, -4].
-         filesystem.read was only needed by the removed Tizen Download transport. -->
     <tizen:privilege name="http://tizen.org/privilege/internet"/>
-
-    <!-- background-support must stay "disable": on the tv-samsung profile an
-         enabled background mode is a partner-level entitlement, and the TV
-         rejects the package with install error [118, -4]. Nuvio TV and
-         Free My TV both ship the widget with "disable". -->
-    <tizen:setting screen-orientation="landscape"
-                   context-menu="disable"
-                   background-support="disable"
-                   encryption="disable"
-                   install-location="auto"
-                   hwkey-event="enable"/>
+    <tizen:profile name="tv-samsung"/>
+    <tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable" encryption="disable" install-location="auto" hwkey-event="enable"/>
 </widget>
