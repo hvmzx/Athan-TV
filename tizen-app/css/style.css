@@ -8,6 +8,7 @@
     --text: #f2efe6;
     --muted: #9fb0b6;
     --teal: #1c8b84;
+    --teal-rgb: 28, 139, 132;
     --green: #4bd695;
     --red: #ef6b6b;
     --blue: #67b7d6;
@@ -22,7 +23,7 @@
     --toast-bg: linear-gradient(135deg, rgba(18, 48, 58, 0.98), rgba(8, 22, 30, 0.98));
     --prayer-bg: radial-gradient(circle at 50% 38%, #113640 0%, #071720 52%, #030a10 100%);
     --glow-bg:
-        radial-gradient(circle at 16% 12%, rgba(28, 139, 132, 0.22) 0%, rgba(28, 139, 132, 0) 42%),
+        radial-gradient(circle at 16% 12%, rgba(var(--teal-rgb),  0.22) 0%, rgba(var(--teal-rgb),  0) 42%),
         radial-gradient(circle at 86% 6%, rgba(var(--gold-rgb), 0.12) 0%, rgba(var(--gold-rgb), 0) 40%),
         radial-gradient(circle at 50% 110%, rgba(13, 60, 74, 0.55) 0%, rgba(4, 11, 18, 0) 55%);
     --pattern-dot: radial-gradient(rgba(var(--gold-rgb), 0.10) 1px, transparent 1px);
@@ -105,6 +106,30 @@ html[data-theme="ramadan"] {
         radial-gradient(circle at 16% 12%, rgba(190, 60, 40, 0.16) 0%, rgba(190, 60, 40, 0) 42%),
         radial-gradient(circle at 86% 6%, rgba(var(--gold-rgb), 0.13) 0%, rgba(var(--gold-rgb), 0) 40%),
         radial-gradient(circle at 50% 110%, rgba(90, 20, 20, 0.55) 0%, rgba(20, 5, 7, 0) 55%);
+}
+
+html[data-theme="oled"] {
+    /* Strict monochrome for OLED: pure black background, only whites and
+       grays anywhere — status dots included. Pixels that are #000 are off. */
+    --bg: #000000;
+    --bg-2: #030303;
+    --panel: rgba(22, 22, 22, 0.72);
+    --gold: #e2e2e2;
+    --gold-2: #ffffff;
+    --teal: #b9b9b9;
+    --teal-rgb: 165, 165, 165;
+    --green: #cfcfcf;
+    --red: #cfcfcf;
+    --blue: #cfcfcf;
+    --gold-rgb: 226, 226, 226;
+    --gold2-rgb: 255, 255, 255;
+    --accent-bg: linear-gradient(135deg, #f2f2f2, #cbcbcb);
+    --accent-ink: #060606;
+    --sheet-bg: linear-gradient(160deg, #101010 0%, #070707 70%, #000000 100%);
+    --toast-bg: linear-gradient(135deg, rgba(36, 36, 36, 0.98), rgba(10, 10, 10, 0.98));
+    --prayer-bg: radial-gradient(circle at 50% 38%, #262626 0%, #0c0c0c 52%, #000000 100%);
+    --glow-bg: none;
+    --pattern-dot: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
 }
 
 * {
@@ -313,8 +338,8 @@ button, input {
 }
 
 .step.done span {
-    border-color: rgba(28, 139, 132, 0.8);
-    background: rgba(28, 139, 132, 0.3);
+    border-color: rgba(var(--teal-rgb),  0.8);
+    background: rgba(var(--teal-rgb),  0.3);
     color: #c9fff5;
 }
 
@@ -698,7 +723,7 @@ button, input {
     border-radius: 2.2vh;
     overflow: hidden;
     margin-right: 1.8vw;
-    background: linear-gradient(135deg, rgba(var(--gold-rgb), 0.16), rgba(28, 139, 132, 0.14));
+    background: linear-gradient(135deg, rgba(var(--gold-rgb), 0.16), rgba(var(--teal-rgb),  0.14));
     border: 1px solid rgba(var(--gold-rgb), 0.25);
     flex: none;
 }
@@ -814,7 +839,7 @@ button, input {
     padding: 2.2vh 2.6vw;
     border-radius: 2vh;
     background:
-        linear-gradient(120deg, rgba(var(--gold-rgb), 0.17) 0%, rgba(28, 139, 132, 0.09) 55%, rgba(255, 255, 255, 0.03) 100%);
+        linear-gradient(120deg, rgba(var(--gold-rgb), 0.17) 0%, rgba(var(--teal-rgb),  0.09) 55%, rgba(255, 255, 255, 0.03) 100%);
     border: 1px solid rgba(var(--gold-rgb), 0.30);
     box-shadow: 0 2vh 5vh rgba(0, 0, 0, 0.32);
 }
@@ -835,7 +860,7 @@ button, input {
     margin-left: 1.4vw;
     padding: 0.6vh 1vw;
     border-radius: 1vh;
-    background: rgba(28, 139, 132, 0.34);
+    background: rgba(var(--teal-rgb),  0.34);
     color: #d6fff8;
     font-size: 1.45vh;
     font-weight: 700;
@@ -965,8 +990,8 @@ button, input {
     margin-top: 1.3vh;
     padding: 1vh 1.8vw;
     border-radius: 1.4vh;
-    background: rgba(28, 139, 132, 0.10);
-    border: 1px solid rgba(28, 139, 132, 0.30);
+    background: rgba(var(--teal-rgb),  0.10);
+    border: 1px solid rgba(var(--teal-rgb),  0.30);
 }
 
 .jumua-label {
@@ -1107,11 +1132,14 @@ button, input {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    /* Row gap keeps wrapped rows (themes, pre-alert) apart vertically; the
+       focus ring extends ~0.32vh, so 1vh is the minimum that stays clean. */
+    column-gap: 0.8vw;
+    row-gap: 1vh;
 }
 
 .seg-btn {
     height: 5.4vh;
-    margin-right: 0.8vw;
     padding: 0 1.4vw;
     border-radius: 1vh;
     background: rgba(255, 255, 255, 0.05);
@@ -1307,31 +1335,28 @@ button.mosque-result.focusable:focus {
 
 /* ============================ Support ============================ */
 
-.support-body {
+.support-inline {
     display: flex;
     align-items: center;
+    column-gap: 2.2vw;
 }
 
-.qr-card {
+.support-qr {
     flex: none;
-    margin-right: 3vw;
-}
-
-.qr-card img {
-    display: block;
-    width: 30vh;
-    height: 30vh;
-    border-radius: 1.4vh;
+    width: 17vh;
+    height: 17vh;
+    border-radius: 1.2vh;
     background: #ffffff;
-    box-shadow: 0 2vh 6vh rgba(0, 0, 0, 0.5);
+    box-shadow: 0 1.5vh 4vh rgba(0, 0, 0, 0.5);
 }
 
-.support-text {
+.support-copy {
     flex: 1;
+    min-width: 0;
 }
 
-.support-text p {
-    margin: 0 0 2.2vh;
+.support-copy p {
+    margin: 0 0 1.4vh;
     line-height: 1.5;
 }
 

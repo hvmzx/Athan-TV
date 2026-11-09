@@ -26,8 +26,8 @@ a native Samsung Tizen notification with sound alerts you on your TV screen.
 - **Remote-First UI** – Bespoke 2D spatial navigation for D-pad arrows, Samsung BACK (`10009`), LG Back (`461`), and OK (`13`).
 - **Offline Tolerant** – Cached in `localStorage`; mosque timezones and DST transitions are handled internally.
 - **Bilingual** – French & English interface (French by default).
-- **Themes** – Five dark colour themes (Midnight, Emerald, Sapphire, Pitch black/`#000` for OLED, Ramadan), selectable in Settings. Themes work purely through CSS variables on `<html data-theme="…">`.
-- **Support Mawaqit** – Settings → *Don (QR)* opens a PayPal donation QR code crediting the Mawaqit platform that powers the data.
+- **Themes** – Six dark colour themes (Midnight, Emerald, Sapphire, Pitch black, **OLED B&W** monochrome on pure `#000`, Ramadan), selectable in Settings. Themes work purely through CSS variables on `<html data-theme="…">`.
+- **Support Mawaqit** – The PayPal donation QR code for the Mawaqit platform (that powers the data) is shown directly in Settings.
 
 ---
 
@@ -207,12 +207,12 @@ The **Mawaqit TV** icon will now appear in your TV's apps ribbon!
 
 Press the **Réglages / Settings** button on the bottom right of the dashboard to configure:
 
-- **Langue**: Switch between Français and English.
-- **Notifications**: Toggle system notifications On/Off, and send a test notification.
+- **Langue**: Switch between Français and English. Notifications always follow this setting.
+- **Notifications**: Toggle system notifications On/Off. *Tester* replays, after 5 seconds, the exact notification the next prayer would post, so you can verify real wording and sound.
 - **Rappel avant l'adhan**: Set a reminder chime 5, 10, or 15 minutes before the adhan (or Off).
-- **Thème**: Midnight, Émeraude, Saphir, Nuit noire (pure `#000`, ideal for OLED) or Ramadan.
+- **Thème**: Midnight, Émeraude, Saphir, Nuit noire, **OLED N&B** (strict monochrome on pure `#000`) or Ramadan.
 - **Son**: Turn audio On/Off and test the adhan sound.
-- **Soutenir Mawaqit**: Opens the PayPal donation QR code for the Mawaqit platform.
+- **Soutenir Mawaqit**: The PayPal donation QR code for the Mawaqit platform, displayed directly in the settings.
 - **Changer de mosquée**: Pick a different mosque without losing your settings.
 
 ---

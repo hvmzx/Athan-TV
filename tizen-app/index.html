@@ -191,6 +191,7 @@
                         <button class="seg-btn focusable" data-theme="emerald" data-i18n="themeEmerald"></button>
                         <button class="seg-btn focusable" data-theme="sapphire" data-i18n="themeSapphire"></button>
                         <button class="seg-btn focusable" data-theme="onyx" data-i18n="themeOnyx"></button>
+                        <button class="seg-btn focusable" data-theme="oled" data-i18n="themeOled"></button>
                         <button class="seg-btn focusable" data-theme="ramadan" data-i18n="themeRamadan"></button>
                     </div>
                 </div>
@@ -231,46 +232,25 @@
 
                 <div class="setting wide">
                     <label data-i18n="supportTitle"></label>
-                    <div class="seg">
-                        <span class="seg-note" data-i18n="supportNote"></span>
-                        <button id="btn-support" class="seg-btn focusable" data-i18n="supportOpen"></button>
+                    <div class="support-inline">
+                        <img class="support-qr" src="assets/donate-qr.png" alt="Mawaqit donation QR code">
+                        <div class="support-copy">
+                            <p class="support-line" data-i18n="supportText"></p>
+                            <p class="support-scan" data-i18n="supportScan"></p>
+                            <p class="support-muted" data-i18n="supportThanks"></p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="settings-actions">
                 <button id="btn-change-mosque" class="btn ghost focusable" data-i18n="changeMosque"></button>
-                <button id="btn-reload" class="btn ghost focusable" data-i18n="refresh"></button>
             </div>
 
             <div class="settings-about">
                 <span id="about-line"></span>
                 <span class="muted"> · </span>
                 <span data-i18n="aboutCredit"></span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================== SUPPORT ========================== -->
-    <div id="overlay-support" class="overlay hidden">
-        <div class="sheet">
-            <header class="sheet-head">
-                <div>
-                    <div class="eyebrow" data-i18n="supportEyebrow"></div>
-                    <h2 data-i18n="supportTitle"></h2>
-                </div>
-                <button id="btn-close-support" class="btn ghost focusable" data-i18n="close"></button>
-            </header>
-
-            <div class="support-body">
-                <div class="qr-card">
-                    <img src="assets/donate-qr.png" alt="Mawaqit donation QR code">
-                </div>
-                <div class="support-text">
-                    <p class="support-line" data-i18n="supportText"></p>
-                    <p class="support-scan" data-i18n="supportScan"></p>
-                    <p class="support-muted" data-i18n="supportThanks"></p>
-                </div>
             </div>
         </div>
     </div>

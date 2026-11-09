@@ -42,6 +42,7 @@
         searchTotal: null,
         searchTimer: null,
         searchSeq: 0,
+        testNotifTimer: null,
         theme: "midnight",
         audioCtx: null
     };
@@ -466,8 +467,8 @@
 
     /* ----------------------------- screens --------------------------- */
 
-    var APP_VERSION = "1.1.4";
-    var THEMES = ["midnight", "emerald", "sapphire", "onyx", "ramadan"];
+    var APP_VERSION = "1.1.5";
+    var THEMES = ["midnight", "emerald", "sapphire", "onyx", "oled", "ramadan"];
 
     function applyTheme() {
         if (THEMES.indexOf(state.theme) === -1) {
@@ -1178,9 +1179,6 @@
         if (state.overlay === "prayer") {
             return $("overlay-prayer");
         }
-        if (state.overlay === "support") {
-            return $("overlay-support");
-        }
         if (state.screen === "setup") {
             return $("screen-setup");
         }
@@ -1203,10 +1201,6 @@
         state.overlay = null;
         $("overlay-settings").classList.add("hidden");
         $("overlay-prayer").classList.add("hidden");
-        var support = $("overlay-support");
-        if (support) {
-            support.classList.add("hidden");
-        }
         clearTimeout(state.overlayTimer);
         stopAdhanAudio();
         if (state.screen === "dashboard") {
@@ -1249,19 +1243,11 @@
         });
     }
 
-    function openSupport() {
-        openOverlay("support");
-    }
-
     function openSettings() {
         setStatus("settings-test-status", "", "");
         var changeButton = $("btn-change-mosque");
         if (changeButton) {
             changeButton.classList.toggle("hidden", !state.mosque);
-        }
-        var reloadButton = $("btn-reload");
-        if (reloadButton) {
-            reloadButton.classList.toggle("hidden", !state.mosque);
         }
         updateSettingsUi();
         openOverlay("settings");
@@ -1494,17 +1480,39 @@
             toggleSetting("notifications");
         });
         $("btn-test-notification").addEventListener("click", function () {
-            var wasOff = !state.notifications;
-            if (wasOff) {
-                state.notifications = true;
+            if (state.testNotifTimer) {
+                window.clearTimeout(state.testNotifTimer);
+                state.testNotifTimer = null;
             }
-            ensureAudio();
-            sendNotification("Athan TV", t("notifTestBody"));
-            if (wasOff) {
-                state.notifications = false;
+            if (!state.overview || !state.overview.next) {
+                showToast("Athan TV", t("notifTestNoMosque"), 4000);
+                return;
             }
-            showToast("Athan TV", t("notifSent"), 4000);
-            playChime(false);
+            showToast("Athan TV", t("notifTestSoon"), 5000);
+            // Fires in 5 s: the exact StatusNotification the next prayer would
+            // post (title/body built live, so it follows the app language).
+            state.testNotifTimer = window.setTimeout(function () {
+                state.testNotifTimer = null;
+                var next = state.overview && state.overview.next;
+                if (!next) {
+                    return;
+                }
+                var name = prayerName(next.key);
+                var wasOff = !state.notifications;
+                if (wasOff) {
+                    state.notifications = true;
+                }
+                sendNotification(
+                    tpl("notifPrayerTitle", { prayer: name, time: next.adhan }),
+                    tpl("notifPrayerBody", { mosque: mosqueLabel() }),
+                    "audio/adan.mp3"
+                );
+                if (wasOff) {
+                    state.notifications = false;
+                }
+                showToast("Athan TV", t("notifSent"), 4000);
+                playChime(false);
+            }, 5000);
         });
         $("toggle-sound").addEventListener("click", function () {
             toggleSetting("sound");
@@ -1530,9 +1538,6 @@
             });
         });
 
-        $("btn-support").addEventListener("click", openSupport);
-        $("btn-close-support").addEventListener("click", closeOverlays);
-
         $("btn-test-sound").addEventListener("click", function () {
             ensureAudio();
             if (isAdhanPlaying()) {
@@ -1545,9 +1550,6 @@
         $("btn-test-api").addEventListener("click", testConnection);
 
         $("btn-change-mosque").addEventListener("click", changeMosque);
-        $("btn-reload").addEventListener("click", function () {
-            refreshOverview(true, true);
-        });
 
         $("toast").addEventListener("click", hideToast);
 
