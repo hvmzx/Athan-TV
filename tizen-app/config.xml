@@ -2,10 +2,10 @@
 <widget xmlns="http://www.w3.org/ns/widgets"
         xmlns:tizen="http://tizen.org/ns/widgets"
         id="http://athantv.app/AthanTV"
-        version="1.1.0"
+        version="1.1.1"
         viewmodes="maximized">
 
-    <tizen:application id="athanTv.app" package="athanTv" required_version="6.5"/>
+    <tizen:application id="athanTv.app" package="athanTv" required_version="2.3"/>
 
     <content src="index.html"/>
 
@@ -21,13 +21,18 @@
 
     <tizen:profile name="tv-samsung"/>
 
-    <!-- Public-level privileges only — Partner privileges cause install error [118,-4] -->
+    <!-- Public-level privileges only: anything the signer is not entitled to
+         makes the TV refuse the package with install error [118, -4].
+         filesystem.read was only needed by the removed Tizen Download transport. -->
     <tizen:privilege name="http://tizen.org/privilege/internet"/>
-    <tizen:privilege name="http://tizen.org/privilege/filesystem.read"/>
 
+    <!-- background-support must stay "disable": on the tv-samsung profile an
+         enabled background mode is a partner-level entitlement, and the TV
+         rejects the package with install error [118, -4]. Nuvio TV and
+         Free My TV both ship the widget with "disable". -->
     <tizen:setting screen-orientation="landscape"
                    context-menu="disable"
-                   background-support="enable"
+                   background-support="disable"
                    encryption="disable"
                    install-location="auto"
                    hwkey-event="enable"/>

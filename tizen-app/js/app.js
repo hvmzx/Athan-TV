@@ -484,7 +484,7 @@
 
         var about = $("about-line");
         if (about) {
-            about.textContent = "Athan TV · v1.1.0";
+            about.textContent = "Athan TV · v1.1.1";
         }
 
         updateSettingsUi();
@@ -1090,7 +1090,6 @@
                 refreshOverview(false);
             }, 90000);
         }
-        void nowMs;
     }
 
     function triggerPrayerNotification(prayer) {
