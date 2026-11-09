@@ -123,12 +123,13 @@ Output: `dist/athan-tv-<version>.wgt` (the version comes from `tizen-app/config.
 > `transform` for full-screen panels: animated fractional-pixel interpolation
 > visibly softens text after each drift step.
 
-> **Background experiment (`--bg`):** `node tools\build-wgt.js --bg` builds
-> `dist/athan-tv-bg-<x>.wgt` — the same app under a fresh sacrificial package
-> id with `background-support="enable"`, to test on-device whether Samsung's
-> loader accepts a self-signed enable and whether timers survive on the Home
-> screen. If the install is rejected the sacrificial id burns, never the real
-> `AthanTizen.AthanTizen`.
+> **Background experiment (`--bg`) — CLOSED, dead end.** `node tools\build-wgt.js --bg`
+> built `dist/athan-tv-bg-1.2.0.wgt` (same app, fresh id `AthanTvB.AthanTvB`,
+> `background-support="enable"`). **Result on-device 2026-11-09: install failed.**
+> Samsung's package loader rejects `enable` from self-signed certificates —
+> background mode is partner-gated. Practical law for this TV: a web app runs
+> only while on screen; the hands-off prayer experience is the TV's **Screen
+> Off** mode. Never reuse the burned `AthanTvB` id.
 
 ---
 

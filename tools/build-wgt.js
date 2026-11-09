@@ -16,7 +16,12 @@
  *     only the build whose comment block was removed. Keep it that way —
  *     document manifest rationale here or in README, never in the manifest.
  *   - required_version must be <= the TV platform (we ship 2.3).
- *   - background-support stays "disable" (partner-level when "enable").
+ *   - background-support must stay "disable": PROVEN DEAD END on this TV —
+ *     the --bg experiment below (fresh id AthanTvB.AthanTvB, otherwise the
+ *     same comment-free ASCII manifest, only flipped to "enable") failed
+ *     install on 2026-11-09. Background mode is partner-gated; a web app
+ *     cannot have it with a self-signed author/distributor cert. The id is
+ *     burned (do not reuse AthanTvB for any future probe).
  *   - No http://tizen.org/feature/network.internet feature; access origin="*"
  *     plus the internet privilege is what the working apps declare.
  *   - After a failed [118] attempt the package id gets poisoned on the TV
@@ -212,11 +217,10 @@ function stageProbe() {
     return dir;
 }
 
-/* Sacrificial background experiment: full app under a FRESH package id with
-   background-support="enable". If the TV's loader rejects it the id burns,
-   never the shipped AthanTizen.AthanTizen. Answers two open questions:
-   (1) does this Samsung build accept a self-signed "enable" manifest at all,
-   (2) do web-app timers keep firing while the app is hidden on the Home screen. */
+/* Sacrificial background experiment — RESULT (2026-11-09): install FAILED.
+   Samsung's loader rejects background-support="enable" from self-signed certs
+   on this TV; the question is closed, keep this code only as the receipt.
+   Full app under a FRESH package id with background-support="enable". */
 function stageBg() {
     const dir = path.join(ROOT, ".cache", "bg-app");
     fs.rmSync(dir, { recursive: true, force: true });
