@@ -102,6 +102,7 @@
             notifPreBody: "{prayer} à {time}.",
             speechPrayer: "C'est l'heure de la prière de {prayer}",
             notifSent: "Notification envoyée.",
+            notifForegroundNote: "Les bannières n'apparaissent que lorsque Athan TV est affiché à l'écran (le mode « Écran éteint » du téléviseur compte comme affiché).",
             notifTestSoon: "Notification de test dans 5 secondes…",
             notifTestNoMosque: "Sélectionnez d'abord une mosquée pour tester la notification.",
 
@@ -210,6 +211,7 @@
             notifPreBody: "{prayer} at {time}.",
             speechPrayer: "It is time for {prayer} prayer",
             notifSent: "Notification sent.",
+            notifForegroundNote: "Banners only appear while Athan TV is on screen (the TV's Screen Off mode still counts as on screen).",
             notifTestSoon: "Test notification in 5 seconds…",
             notifTestNoMosque: "Select a mosque first to test the notification.",
 

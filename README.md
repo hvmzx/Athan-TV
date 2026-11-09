@@ -7,8 +7,8 @@ on [mawaqit.net](https://mawaqit.net).
 
 Pick a country, select your mosque, and the TV displays its official adhan and iqama times,
 Jumu'ah schedule, announcements, and the Hijri date. At prayer time, the app plays the Adhan and
-takes over the screen with a full-size reminder and countdown. When the app is in the background,
-a native Samsung Tizen notification with sound alerts you on your TV screen.
+takes over the screen with a full-size reminder and countdown. Keep the app on your TV's *Screen
+Off* (Eco) mode and the full sound + notification experience keeps running with the panel dark.
 
 ---
 
@@ -18,10 +18,10 @@ a native Samsung Tizen notification with sound alerts you on your TV screen.
 - **Mosque Picker** – Browse 156 countries and search among thousands of mosques by name, city, address, or postal code. Results update live as you type (the country map is cached locally, so typing costs almost no bandwidth).
 - **TV Dashboard** – Mosque logo and name, mosque-local clock, Gregorian + Hijri dates, next-prayer countdown, six prayer cards (Fajr, Shuruq, Dhuhr, Asr, Maghrib, Isha) and Iqama times.
 - **Jumu'ah & Announcements** – Displays up to three Jumu'ah prayer times and an announcement ticker.
-- **Adhan & Notifications**:
-  - **In foreground**: Full-screen modal takeover with the glowing crescent, mosque name, Iqama countdown, and real Adhan audio playback (`adan.mp3`). Dismiss anytime with **OK** or **BACK**.
-  - **In background**: Native Samsung Tizen `StatusNotification` banner with adhan audio, allowing you to be notified while watching TV or using another app.
-  - **Pre-alert reminder**: Optional discreet chime and reminder toast 5, 10, or 15 minutes before the adhan.
+- **Adhan & Notifications** (all fire while Athan TV is on screen — see *Audio & Notifications*):
+  - **On screen**: Full-screen modal takeover with the glowing crescent, mosque name, Iqama countdown, and real Adhan audio playback (`adan.mp3**), plus a native Tizen notification banner. Dismiss anytime with **OK** or **BACK**.
+  - **Panel dark**: Use the TV's *Screen Off* mode — the app stays on screen logically, keeps ticking, and still takes over with sound at prayer time.
+  - **Pre-alert reminder**: Optional discreet chime and reminder toast + banner 5, 10, or 15 minutes before the adhan.
 - **OLED / QLED Burn-in Protection** – Gentle 20-minute Lissajous pixel drift prevents static retention during continuous display.
 - **Remote-First UI** – Bespoke 2D spatial navigation for D-pad arrows, Samsung BACK (`10009`), LG Back (`461`), and OK (`13`).
 - **Offline Tolerant** – Cached in `localStorage`; mosque timezones and DST transitions are handled internally.
@@ -195,9 +195,10 @@ The **Mawaqit TV** icon will now appear in your TV's apps ribbon!
 ### Audio & Notifications
 
 - **Audio Unlock**: Modern TV browsers suspend audio until the first interaction. Press any key on your remote after launching the app once to prime the audio context.
-- **Prayer Moment**: When the adhan time is reached:
-  - If the app is open: the screen opens a full prayer overlay and plays `adan.mp3`. Press **OK** or **BACK** to dismiss and stop the audio.
-  - If the app is in the background: a native Samsung Tizen `StatusNotification` banner appears with adhan sound. Clicking it opens Mawaqit TV.
+- **Prayer Moment**: When the adhan time is reached while the app is on screen:
+  - The screen opens a full prayer overlay and plays `adan.mp3`. Press **OK** or **BACK** to dismiss and stop the audio.
+  - A native Samsung Tizen `StatusNotification` banner with adhan audio is posted alongside the overlay/toasts.
+- **Frozen-when-hidden reality**: The manifest ships with `background-support="disable"` (the stable, install-safe configuration proven on-device). Leaving the app for the Smart Hub stops its timers — no banner will fire while another app or the home screen is up. The supported "hands-off" mode is the TV's own **Settings → Power Saving / Eco → Screen Off**, which keeps the on-screen app alive and only blanks the panel. The in-app test (*Settings → Notifications → Tester*) shows the exact next-prayer notification 5 s after pressing it; press it before switching to Screen Off mode and verify.
 - **Late Launch Protection**: If the app is opened more than 90 seconds after a prayer started, it will not interrupt you with an alarm.
 - **OLED Protection**: The dashboard slowly shifts by ±3 pixels over 20-minute intervals to protect OLED/QLED displays from burn-in.
 

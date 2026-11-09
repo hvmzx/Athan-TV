@@ -467,7 +467,7 @@
 
     /* ----------------------------- screens --------------------------- */
 
-    var APP_VERSION = "1.1.6";
+    var APP_VERSION = "1.1.7";
     var THEMES = ["midnight", "emerald", "sapphire", "onyx", "oled", "ramadan"];
 
     function applyTheme() {
