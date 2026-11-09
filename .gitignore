@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local configuration / secrets
+.env
+*.env.local
+
+# Tizen build artifacts
+tizen-app/.buildResult/
+tizen-app/.package/
+tizen-app/.sign/
+tizen-app/_tvtest.html
+
+# Reference repos
+repos/free-my-tv/
+repos/NuvioTVSmart/
+
+# Reference clones of upstream projects (each has its own .git)
+repos/
+
+# Rebuild with: node tools/build-wgt.js
+dist/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

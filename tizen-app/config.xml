@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets"
+        xmlns:tizen="http://tizen.org/ns/widgets"
+        id="http://athantv.app/AthanTV"
+        version="1.1.0"
+        viewmodes="maximized">
+
+    <tizen:application id="athanTv.app" package="athanTv" required_version="6.5"/>
+
+    <content src="index.html"/>
+
+    <feature name="http://tizen.org/feature/screen.size.all"/>
+    <feature name="http://tizen.org/feature/network.internet"/>
+
+    <icon src="icon.png"/>
+    <name>Athan TV</name>
+    <description>Prayer times and adhan notifications on your Samsung TV.</description>
+    <author href="https://athantv.app" email="contact@athantv.app">Athan TV</author>
+
+    <access origin="*" subdomains="true"/>
+
+    <tizen:profile name="tv-samsung"/>
+
+    <!-- Public-level privileges only — Partner privileges cause install error [118,-4] -->
+    <tizen:privilege name="http://tizen.org/privilege/internet"/>
+    <tizen:privilege name="http://tizen.org/privilege/filesystem.read"/>
+
+    <tizen:setting screen-orientation="landscape"
+                   context-menu="disable"
+                   background-support="enable"
+                   encryption="disable"
+                   install-location="auto"
+                   hwkey-event="enable"/>
+</widget>
