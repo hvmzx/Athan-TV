@@ -2,7 +2,7 @@
     --bg: #040b12;
     --bg-2: #07141d;
     --panel: rgba(12, 32, 42, 0.72);
-    --line: rgba(233, 198, 112, 0.18);
+    --line: rgba(var(--gold-rgb), 0.18);
     --gold: #e9c66a;
     --gold-2: #f7e3a6;
     --text: #f2efe6;
@@ -11,6 +11,100 @@
     --green: #4bd695;
     --red: #ef6b6b;
     --blue: #67b7d6;
+
+    /* Theme plumbing: rgb triplets feed every gold tint (rgba(var(--gold-rgb), a)),
+       component variables carry the larger gradients. Themes below override. */
+    --gold-rgb: 233, 198, 112;
+    --gold2-rgb: 247, 227, 166;
+    --accent-bg: linear-gradient(135deg, #f0d184, #d3a842);
+    --accent-ink: #0b2028;
+    --sheet-bg: linear-gradient(160deg, #0d2732 0%, #081820 70%, #07141c 100%);
+    --toast-bg: linear-gradient(135deg, rgba(18, 48, 58, 0.98), rgba(8, 22, 30, 0.98));
+    --prayer-bg: radial-gradient(circle at 50% 38%, #113640 0%, #071720 52%, #030a10 100%);
+    --glow-bg:
+        radial-gradient(circle at 16% 12%, rgba(28, 139, 132, 0.22) 0%, rgba(28, 139, 132, 0) 42%),
+        radial-gradient(circle at 86% 6%, rgba(var(--gold-rgb), 0.12) 0%, rgba(var(--gold-rgb), 0) 40%),
+        radial-gradient(circle at 50% 110%, rgba(13, 60, 74, 0.55) 0%, rgba(4, 11, 18, 0) 55%);
+    --pattern-dot: radial-gradient(rgba(var(--gold-rgb), 0.10) 1px, transparent 1px);
+}
+
+/* --------------------------- Themes --------------------------- */
+/* midnight = default. All palettes stay dark (TV-first) but shift hue and
+   washes; --gold-rgb retints every soft highlight automatically. */
+
+html[data-theme="emerald"] {
+    --bg: #03110a;
+    --bg-2: #071c11;
+    --panel: rgba(12, 40, 26, 0.72);
+    --gold: #8fd6a3;
+    --gold-2: #d9f0d8;
+    --teal: #1f9d78;
+    --gold-rgb: 143, 214, 163;
+    --gold2-rgb: 217, 240, 216;
+    --accent-bg: linear-gradient(135deg, #bde8c3, #69b582);
+    --sheet-bg: linear-gradient(160deg, #0c2a1d 0%, #07190f 70%, #06140c 100%);
+    --toast-bg: linear-gradient(135deg, rgba(16, 58, 38, 0.98), rgba(7, 30, 18, 0.98));
+    --prayer-bg: radial-gradient(circle at 50% 38%, #10412a 0%, #062014 52%, #01100a 100%);
+    --glow-bg:
+        radial-gradient(circle at 16% 12%, rgba(36, 160, 96, 0.20) 0%, rgba(36, 160, 96, 0) 42%),
+        radial-gradient(circle at 86% 6%, rgba(var(--gold-rgb), 0.10) 0%, rgba(var(--gold-rgb), 0) 40%),
+        radial-gradient(circle at 50% 110%, rgba(12, 70, 44, 0.55) 0%, rgba(3, 17, 10, 0) 55%);
+}
+
+html[data-theme="sapphire"] {
+    --bg: #040a17;
+    --bg-2: #081226;
+    --panel: rgba(14, 27, 50, 0.72);
+    --gold: #8fb8f2;
+    --gold-2: #d3e2fb;
+    --teal: #2f86c8;
+    --gold-rgb: 143, 184, 242;
+    --gold2-rgb: 211, 226, 251;
+    --accent-bg: linear-gradient(135deg, #b5ccf7, #6a92d8);
+    --sheet-bg: linear-gradient(160deg, #0d1c36 0%, #081225 70%, #060e1d 100%);
+    --toast-bg: linear-gradient(135deg, rgba(16, 38, 72, 0.98), rgba(7, 17, 38, 0.98));
+    --prayer-bg: radial-gradient(circle at 50% 38%, #14315e 0%, #071529 52%, #020712 100%);
+    --glow-bg:
+        radial-gradient(circle at 16% 12%, rgba(64, 120, 220, 0.20) 0%, rgba(64, 120, 220, 0) 42%),
+        radial-gradient(circle at 86% 6%, rgba(var(--gold-rgb), 0.10) 0%, rgba(var(--gold-rgb), 0) 40%),
+        radial-gradient(circle at 50% 110%, rgba(20, 50, 110, 0.55) 0%, rgba(4, 10, 23, 0) 55%);
+}
+
+html[data-theme="onyx"] {
+    /* Pure black: OLED pixels off, no glow washes at all. */
+    --bg: #000000;
+    --bg-2: #050505;
+    --panel: rgba(20, 20, 20, 0.72);
+    --gold: #cbaa72;
+    --gold-2: #eedeae;
+    --teal: #3f9d94;
+    --gold-rgb: 203, 170, 114;
+    --gold2-rgb: 238, 222, 174;
+    --accent-bg: linear-gradient(135deg, #e3c483, #b58f4e);
+    --sheet-bg: linear-gradient(160deg, #161616 0%, #0b0b0b 70%, #080808 100%);
+    --toast-bg: linear-gradient(135deg, rgba(30, 30, 30, 0.98), rgba(12, 12, 12, 0.98));
+    --prayer-bg: radial-gradient(circle at 50% 38%, #1d2724 0%, #0a0f0e 52%, #000000 100%);
+    --glow-bg: none;
+    --pattern-dot: radial-gradient(rgba(var(--gold-rgb), 0.045) 1px, transparent 1px);
+}
+
+html[data-theme="ramadan"] {
+    --bg: #140507;
+    --bg-2: #1e080b;
+    --panel: rgba(48, 17, 19, 0.72);
+    --gold: #e7c47a;
+    --gold-2: #f5e3ae;
+    --teal: #b0603c;
+    --gold-rgb: 231, 196, 122;
+    --gold2-rgb: 245, 227, 174;
+    --accent-bg: linear-gradient(135deg, #eec87e, #c99a3f);
+    --sheet-bg: linear-gradient(160deg, #2a1013 0%, #180709 70%, #120507 100%);
+    --toast-bg: linear-gradient(135deg, rgba(58, 24, 26, 0.98), rgba(28, 10, 12, 0.98));
+    --prayer-bg: radial-gradient(circle at 50% 38%, #4a1a1e 0%, #20080a 52%, #0e0203 100%);
+    --glow-bg:
+        radial-gradient(circle at 16% 12%, rgba(190, 60, 40, 0.16) 0%, rgba(190, 60, 40, 0) 42%),
+        radial-gradient(circle at 86% 6%, rgba(var(--gold-rgb), 0.13) 0%, rgba(var(--gold-rgb), 0) 40%),
+        radial-gradient(circle at 50% 110%, rgba(90, 20, 20, 0.55) 0%, rgba(20, 5, 7, 0) 55%);
 }
 
 * {
@@ -77,10 +171,7 @@ button, input {
     right: 0;
     bottom: 0;
     pointer-events: none;
-    background:
-        radial-gradient(circle at 16% 12%, rgba(28, 139, 132, 0.22) 0%, rgba(28, 139, 132, 0) 42%),
-        radial-gradient(circle at 86% 6%, rgba(233, 198, 112, 0.12) 0%, rgba(233, 198, 112, 0) 40%),
-        radial-gradient(circle at 50% 110%, rgba(13, 60, 74, 0.55) 0%, rgba(4, 11, 18, 0) 55%);
+    background: var(--glow-bg);
 }
 
 .dash-pattern {
@@ -91,7 +182,7 @@ button, input {
     bottom: 0;
     pointer-events: none;
     opacity: 0.3;
-    background-image: radial-gradient(rgba(233, 198, 112, 0.10) 1px, transparent 1px);
+    background-image: var(--pattern-dot);
     background-size: 3.2vh 3.2vh;
 }
 
@@ -116,7 +207,7 @@ button, input {
     height: 7.6vh;
     object-fit: contain;
     margin-right: 1.6vw;
-    filter: drop-shadow(0 0.8vh 2vh rgba(233, 198, 112, 0.3));
+    filter: drop-shadow(0 0.8vh 2vh rgba(var(--gold-rgb), 0.3));
 }
 
 .brand-mark {
@@ -126,7 +217,7 @@ button, input {
     border-radius: 50%;
     margin-right: 1.6vw;
     background: linear-gradient(135deg, #0e3844, #08222d);
-    border: 1px solid rgba(233, 198, 112, 0.35);
+    border: 1px solid rgba(var(--gold-rgb), 0.35);
     box-shadow: 0 1.4vh 4vh rgba(0, 0, 0, 0.35);
 }
 
@@ -160,7 +251,7 @@ button, input {
     height: 1.1vh;
     background: var(--gold-2);
     transform: rotate(45deg);
-    box-shadow: 0 0 1.4vh rgba(247, 227, 166, 0.8);
+    box-shadow: 0 0 1.4vh rgba(var(--gold2-rgb), 0.8);
 }
 
 .brand-name {
@@ -213,7 +304,7 @@ button, input {
 
 .step.active span {
     border-color: var(--gold);
-    background: rgba(233, 198, 112, 0.16);
+    background: rgba(var(--gold-rgb), 0.16);
     color: var(--gold-2);
 }
 
@@ -328,15 +419,14 @@ button, input {
     transition: transform 0.16s, box-shadow 0.16s, border-color 0.16s, background 0.16s;
 }
 
-.btn.primary {
-    background: linear-gradient(135deg, #f0d184, #d3a842);
-    color: #0b2028;
-    box-shadow: 0 1.2vh 3.4vh rgba(233, 198, 112, 0.16);
+.btn.primary,
+.btn.gold {
+    background: var(--accent-bg);
+    color: var(--accent-ink);
 }
 
-.btn.gold {
-    background: linear-gradient(135deg, #f0d184, #d3a842);
-    color: #0b2028;
+.btn.primary {
+    box-shadow: 0 1.2vh 3.4vh rgba(var(--gold-rgb), 0.16);
 }
 
 .btn.ghost {
@@ -386,9 +476,8 @@ button, input {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    margin-top: 1vh;
-    padding-right: 0.7vw;
-    padding-top: 0.4vh;
+    margin: 1vh -1.1vw 0 -1.1vw;
+    padding: 0.9vh 1.8vw 0.9vh 1.1vw;
 }
 
 .country-chip {
@@ -412,7 +501,7 @@ button, input {
     margin-left: 0.9vw;
     padding: 0.45vh 0.6vw;
     border-radius: 0.8vh;
-    background: rgba(233, 198, 112, 0.1);
+    background: rgba(var(--gold-rgb), 0.1);
     color: var(--gold);
     font-size: 1.4vh;
     font-weight: 700;
@@ -440,12 +529,14 @@ button, input {
     color: var(--muted);
 }
 
+/* Negative margins + padding: the scroll clip-box extends past the rows so
+   the focus ring (box-shadow) is never clipped at the list edges. */
 .mosque-results {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    margin-top: 1.2vh;
-    padding-right: 0.7vw;
+    margin: 1.2vh -1.1vw 0 -1.1vw;
+    padding: 0.6vh 1.8vw 0.6vh 1.1vw;
 }
 
 .mosque-result {
@@ -471,7 +562,7 @@ button, input {
     border-radius: 1.2vh;
     overflow: hidden;
     margin-right: 1.6vw;
-    background: rgba(233, 198, 112, 0.1);
+    background: rgba(var(--gold-rgb), 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -564,7 +655,7 @@ button, input {
 
 .dot.warn {
     background: var(--gold);
-    box-shadow: 0 0 1vh rgba(233, 198, 112, 0.6);
+    box-shadow: 0 0 1vh rgba(var(--gold-rgb), 0.6);
 }
 
 .dot.error {
@@ -580,7 +671,8 @@ button, input {
 /* ========================== Dashboard ========================== */
 
 #screen-dashboard {
-    transition: transform 3s ease-in-out;
+    /* OLED drift is an integer-pixel translate3d; a transition would keep it
+       mid-animation (fractional pixels = soft text on the TV's 2x upscale). */
     will-change: transform;
 }
 
@@ -606,8 +698,8 @@ button, input {
     border-radius: 2.2vh;
     overflow: hidden;
     margin-right: 1.8vw;
-    background: linear-gradient(135deg, rgba(233, 198, 112, 0.16), rgba(28, 139, 132, 0.14));
-    border: 1px solid rgba(233, 198, 112, 0.25);
+    background: linear-gradient(135deg, rgba(var(--gold-rgb), 0.16), rgba(28, 139, 132, 0.14));
+    border: 1px solid rgba(var(--gold-rgb), 0.25);
     flex: none;
 }
 
@@ -722,8 +814,8 @@ button, input {
     padding: 2.2vh 2.6vw;
     border-radius: 2vh;
     background:
-        linear-gradient(120deg, rgba(233, 198, 112, 0.17) 0%, rgba(28, 139, 132, 0.09) 55%, rgba(255, 255, 255, 0.03) 100%);
-    border: 1px solid rgba(233, 198, 112, 0.30);
+        linear-gradient(120deg, rgba(var(--gold-rgb), 0.17) 0%, rgba(28, 139, 132, 0.09) 55%, rgba(255, 255, 255, 0.03) 100%);
+    border: 1px solid rgba(var(--gold-rgb), 0.30);
     box-shadow: 0 2vh 5vh rgba(0, 0, 0, 0.32);
 }
 
@@ -840,9 +932,9 @@ button, input {
 }
 
 .prayer-card.is-next {
-    background: linear-gradient(160deg, rgba(233, 198, 112, 0.22) 0%, rgba(233, 198, 112, 0.055) 100%);
-    border-color: rgba(233, 198, 112, 0.62);
-    box-shadow: 0 0 3.4vh rgba(233, 198, 112, 0.16);
+    background: linear-gradient(160deg, rgba(var(--gold-rgb), 0.22) 0%, rgba(var(--gold-rgb), 0.055) 100%);
+    border-color: rgba(var(--gold-rgb), 0.62);
+    box-shadow: 0 0 3.4vh rgba(var(--gold-rgb), 0.16);
 }
 
 .prayer-card.is-next .prayer-adhan {
@@ -909,40 +1001,6 @@ button, input {
     color: var(--muted);
 }
 
-.ticker {
-    display: flex;
-    align-items: center;
-    flex: none;
-    margin-top: 1.2vh;
-    padding: 0.75vh 1.5vw;
-    border-radius: 1vh;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.ticker-badge {
-    flex: none;
-    margin-right: 1vw;
-    padding: 0.35vh 0.7vw;
-    border-radius: 0.7vh;
-    background: rgba(233, 198, 112, 0.14);
-    color: var(--gold);
-    font-size: 1.35vh;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-}
-
-.ticker-text {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 1.75vh;
-    color: #c8d5d8;
-}
-
 .dash-foot {
     position: relative;
     z-index: 1;
@@ -998,8 +1056,8 @@ button, input {
     overflow-y: auto;
     padding: 2.6vh 3vw;
     border-radius: 2.4vh;
-    background: linear-gradient(160deg, #0d2732 0%, #081820 70%, #07141c 100%);
-    border: 1px solid rgba(233, 198, 112, 0.24);
+    background: var(--sheet-bg);
+    border: 1px solid rgba(var(--gold-rgb), 0.24);
     box-shadow: 0 4vh 12vh rgba(0, 0, 0, 0.65);
 }
 
@@ -1067,9 +1125,9 @@ button, input {
 }
 
 .seg-btn.is-active {
-    background: linear-gradient(135deg, rgba(233, 198, 112, 0.92), rgba(211, 168, 66, 0.92));
+    background: var(--accent-bg);
     border-color: transparent;
-    color: #0b2028;
+    color: var(--accent-ink);
 }
 
 .setting .field-row {
@@ -1114,8 +1172,7 @@ button, input {
     display: flex;
     align-items: center;
     justify-content: center;
-    background:
-        radial-gradient(circle at 50% 38%, #113640 0%, #071720 52%, #030a10 100%);
+    background: var(--prayer-bg);
 }
 
 .prayer-overlay-glow {
@@ -1126,7 +1183,7 @@ button, input {
     bottom: 0;
     pointer-events: none;
     background:
-        radial-gradient(circle at 50% 50%, rgba(233, 198, 112, 0.18) 0%, rgba(233, 198, 112, 0) 48%);
+        radial-gradient(circle at 50% 50%, rgba(var(--gold-rgb), 0.18) 0%, rgba(var(--gold-rgb), 0) 48%);
 }
 
 .prayer-overlay-content {
@@ -1186,8 +1243,8 @@ button, input {
     z-index: 120;
     padding: 1.8vh 2vw;
     border-radius: 1.6vh;
-    background: linear-gradient(135deg, rgba(18, 48, 58, 0.98), rgba(8, 22, 30, 0.98));
-    border: 1px solid rgba(233, 198, 112, 0.45);
+    background: var(--toast-bg);
+    border: 1px solid rgba(var(--gold-rgb), 0.45);
     box-shadow: 0 3vh 8vh rgba(0, 0, 0, 0.6);
     animation: toast-in 0.28s ease-out;
 }
@@ -1223,8 +1280,8 @@ button, input {
 
 .focusable:focus {
     border-color: var(--gold) !important;
-    box-shadow: 0 0 0 0.32vh rgba(233, 198, 112, 0.88), 0 1.6vh 4.4vh rgba(233, 198, 112, 0.20) !important;
-    background-color: rgba(233, 198, 112, 0.08);
+    box-shadow: 0 0 0 0.32vh rgba(var(--gold-rgb), 0.88), 0 1.6vh 4.4vh rgba(var(--gold-rgb), 0.20) !important;
+    background-color: rgba(var(--gold-rgb), 0.08);
 }
 
 button.focusable:focus {
@@ -1234,12 +1291,64 @@ button.focusable:focus {
 .btn.primary.focusable:focus,
 .btn.gold.focusable:focus,
 .seg-btn.is-active.focusable:focus {
-    box-shadow: 0 0 0 0.32vh rgba(247, 227, 166, 0.95), 0 1.8vh 5vh rgba(233, 198, 112, 0.38) !important;
+    box-shadow: 0 0 0 0.32vh rgba(var(--gold2-rgb), 0.95), 0 1.8vh 5vh rgba(var(--gold-rgb), 0.38) !important;
 }
 
 .mosque-result.focusable:focus,
 .country-chip.focusable:focus {
-    background-color: rgba(233, 198, 112, 0.12);
+    background-color: rgba(var(--gold-rgb), 0.12);
+}
+
+/* Full-width rows: scaling a 100% row pushes it past the scroll edges, which
+   is what looked like the selection "border leaving the screen". */
+button.mosque-result.focusable:focus {
+    transform: none;
+}
+
+/* ============================ Support ============================ */
+
+.support-body {
+    display: flex;
+    align-items: center;
+}
+
+.qr-card {
+    flex: none;
+    margin-right: 3vw;
+}
+
+.qr-card img {
+    display: block;
+    width: 30vh;
+    height: 30vh;
+    border-radius: 1.4vh;
+    background: #ffffff;
+    box-shadow: 0 2vh 6vh rgba(0, 0, 0, 0.5);
+}
+
+.support-text {
+    flex: 1;
+}
+
+.support-text p {
+    margin: 0 0 2.2vh;
+    line-height: 1.5;
+}
+
+.support-line {
+    font-size: 2vh;
+    color: var(--muted);
+}
+
+.support-scan {
+    font-size: 2.35vh;
+    font-weight: 700;
+    color: var(--gold-2);
+}
+
+.support-muted {
+    font-size: 1.7vh;
+    color: var(--muted);
 }
 
 /* ========================== Scrollbar ========================== */
@@ -1253,6 +1362,6 @@ button.focusable:focus {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(233, 198, 112, 0.24);
+    background: rgba(var(--gold-rgb), 0.24);
     border-radius: 1vh;
 }

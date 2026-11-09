@@ -146,21 +146,11 @@
                 <span class="jumua-label" data-i18n="jumua"></span>
                 <div id="jumua-times" class="jumua-times"></div>
             </section>
-
-            <div id="ticker" class="ticker hidden">
-                <span class="ticker-badge" data-i18n="announcement"></span>
-                <span id="ticker-text" class="ticker-text"></span>
-            </div>
         </main>
 
         <footer class="dash-foot">
-            <div class="foot-left">
-                <span class="status-pill"><span class="dot" id="dash-dot"></span><span id="dash-status">—</span></span>
-                <span id="dash-updated" class="small muted"></span>
-            </div>
+            <div class="spacer"></div>
             <div class="foot-right">
-                <span id="dash-tz" class="small muted"></span>
-                <button id="btn-refresh" class="btn tiny ghost focusable" data-i18n="refresh"></button>
                 <button id="btn-settings" class="btn tiny gold focusable" data-i18n="settings"></button>
             </div>
         </footer>
@@ -190,6 +180,18 @@
                     <label data-i18n="notifications"></label>
                     <div class="seg">
                         <button id="toggle-notifications" class="seg-btn focusable">—</button>
+                        <button id="btn-test-notification" class="seg-btn focusable" data-i18n="test"></button>
+                    </div>
+                </div>
+
+                <div class="setting">
+                    <label data-i18n="theme"></label>
+                    <div class="seg" id="theme-seg">
+                        <button class="seg-btn focusable" data-theme="midnight" data-i18n="themeMidnight"></button>
+                        <button class="seg-btn focusable" data-theme="emerald" data-i18n="themeEmerald"></button>
+                        <button class="seg-btn focusable" data-theme="sapphire" data-i18n="themeSapphire"></button>
+                        <button class="seg-btn focusable" data-theme="onyx" data-i18n="themeOnyx"></button>
+                        <button class="seg-btn focusable" data-theme="ramadan" data-i18n="themeRamadan"></button>
                     </div>
                 </div>
 
@@ -226,6 +228,14 @@
                     </div>
                     <div id="settings-test-status" class="status-line"></div>
                 </div>
+
+                <div class="setting wide">
+                    <label data-i18n="supportTitle"></label>
+                    <div class="seg">
+                        <span class="seg-note" data-i18n="supportNote"></span>
+                        <button id="btn-support" class="seg-btn focusable" data-i18n="supportOpen"></button>
+                    </div>
+                </div>
             </div>
 
             <div class="settings-actions">
@@ -237,6 +247,30 @@
                 <span id="about-line"></span>
                 <span class="muted"> · </span>
                 <span data-i18n="aboutCredit"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================== SUPPORT ========================== -->
+    <div id="overlay-support" class="overlay hidden">
+        <div class="sheet">
+            <header class="sheet-head">
+                <div>
+                    <div class="eyebrow" data-i18n="supportEyebrow"></div>
+                    <h2 data-i18n="supportTitle"></h2>
+                </div>
+                <button id="btn-close-support" class="btn ghost focusable" data-i18n="close"></button>
+            </header>
+
+            <div class="support-body">
+                <div class="qr-card">
+                    <img src="assets/donate-qr.png" alt="Mawaqit donation QR code">
+                </div>
+                <div class="support-text">
+                    <p class="support-line" data-i18n="supportText"></p>
+                    <p class="support-scan" data-i18n="supportScan"></p>
+                    <p class="support-muted" data-i18n="supportThanks"></p>
+                </div>
             </div>
         </div>
     </div>

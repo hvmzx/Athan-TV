@@ -15,7 +15,7 @@ a native Samsung Tizen notification with sound alerts you on your TV screen.
 ## Features
 
 - **100% Standalone (v1.1.0)** – Runs directly on your Samsung TV. No computer, server, or Docker container to run on your local network.
-- **Mosque Picker** – Browse 156 countries and search among thousands of mosques by name, city, address, or postal code.
+- **Mosque Picker** – Browse 156 countries and search among thousands of mosques by name, city, address, or postal code. Results update live as you type (the country map is cached locally, so typing costs almost no bandwidth).
 - **TV Dashboard** – Mosque logo and name, mosque-local clock, Gregorian + Hijri dates, next-prayer countdown, six prayer cards (Fajr, Shuruq, Dhuhr, Asr, Maghrib, Isha) and Iqama times.
 - **Jumu'ah & Announcements** – Displays up to three Jumu'ah prayer times and an announcement ticker.
 - **Adhan & Notifications**:
@@ -26,6 +26,8 @@ a native Samsung Tizen notification with sound alerts you on your TV screen.
 - **Remote-First UI** – Bespoke 2D spatial navigation for D-pad arrows, Samsung BACK (`10009`), LG Back (`461`), and OK (`13`).
 - **Offline Tolerant** – Cached in `localStorage`; mosque timezones and DST transitions are handled internally.
 - **Bilingual** – French & English interface (French by default).
+- **Themes** – Five dark colour themes (Midnight, Emerald, Sapphire, Pitch black/`#000` for OLED, Ramadan), selectable in Settings. Themes work purely through CSS variables on `<html data-theme="…">`.
+- **Support Mawaqit** – Settings → *Don (QR)* opens a PayPal donation QR code crediting the Mawaqit platform that powers the data.
 
 ---
 
@@ -61,11 +63,16 @@ The TV app connects directly to `mawaqit.net`, parses mosque `confData` client-s
 │   │   ├── nav.js           Spatial D-pad remote navigation
 │   │   ├── countries.js     Bundled 156-country directory
 │   │   └── i18n.js          French & English dictionaries
-│   └── icon.png             TV home screen icon
+│   ├── assets/
+│   │   └── donate-qr.png     Mawaqit PayPal donation QR code
+│   ├── logo.png             Transparent line-art logo used in-app
+│   └── icon.png             TV home screen icon (opaque)
 ├── tools/
 │   ├── build-wgt.js         Builds the unsigned .wgt package (Node.js)
 │   ├── dev-server.js        Dev HTTP server with CORS proxy for PC browsers
-│   └── generate-icons.js    Regenerates application icons
+│   ├── generate-icons.js    Regenerates application icons
+│   ├── make-icon.py         Flattens logo.png onto the opaque launcher icon (Pillow)
+│   └── make-qr.js           Regenerates assets/donate-qr.png (qrcode npm pkg in .cache/qrgen)
 ├── dist/                    Built packages ready for signing
 └── docs/screenshots/
 ```
@@ -105,6 +112,28 @@ Output: `dist/athan-tv-<version>.wgt` (the version comes from `tizen-app/config.
 > Keep `config.xml` comments-free and pure ASCII; the build refuses
 > otherwise. After a failed `[118]` attempt the TV poisons that package id
 > (hidden copies), so re-tests need a fresh `package=` / `tizen:application id=`.
+
+> **4K note:** on UHD TVs the Tizen web engine renders every web app at a
+> 1080p logical surface and the system upscales it — native 4K raster is not
+> reachable from web apps. Keep UI transforms on integer pixels (the OLED drift
+> already `Math.round`s) and avoid CSS transitions on `transform` for
+> full-screen panels: animated fractional-pixel interpolation visibly softens
+> text after each drift step.
+
+---
+
+## Asset generators
+
+- `tizen-app/icon.png` is the flattened, **fully opaque** launcher icon. The
+  in-app `logo.png` stays transparent, but the launcher icon must not: the
+  Samsung selection highlight turns white behind transparent pixels, making the
+  logo flip from dark to white when selected. Regenerate with
+  `tools/make-icon.py` (needs Pillow; run with any Python that has it installed).
+- `tizen-app/assets/donate-qr.png` regenerates with:
+  ```powershell
+  npm --prefix .cache\qrgen install qrcode
+  node tools\make-qr.js
+  ```
 
 ---
 
@@ -179,9 +208,11 @@ The **Mawaqit TV** icon will now appear in your TV's apps ribbon!
 Press the **Réglages / Settings** button on the bottom right of the dashboard to configure:
 
 - **Langue**: Switch between Français and English.
-- **Notifications**: Toggle system notifications On/Off.
+- **Notifications**: Toggle system notifications On/Off, and send a test notification.
 - **Rappel avant l'adhan**: Set a reminder chime 5, 10, or 15 minutes before the adhan (or Off).
+- **Thème**: Midnight, Émeraude, Saphir, Nuit noire (pure `#000`, ideal for OLED) or Ramadan.
 - **Son**: Turn audio On/Off and test the adhan sound.
+- **Soutenir Mawaqit**: Opens the PayPal donation QR code for the Mawaqit platform.
 - **Changer de mosquée**: Pick a different mosque without losing your settings.
 
 ---

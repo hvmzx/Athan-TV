@@ -35,13 +35,14 @@
         lastPreKey: "",
         prayerOverlayIqamaAt: "",
         prayerOverlayIqamaText: "",
-        tickerTimer: null,
-        tickerIndex: 0,
         toastTimer: null,
         overlayTimer: null,
         lastRefreshAt: 0,
         refreshing: false,
         searchTotal: null,
+        searchTimer: null,
+        searchSeq: 0,
+        theme: "midnight",
         audioCtx: null
     };
 
@@ -82,6 +83,9 @@
             if (typeof data.preAlertMinutes === "number") {
                 state.preAlertMinutes = data.preAlertMinutes;
             }
+            if (typeof data.theme === "string" && data.theme) {
+                state.theme = data.theme;
+            }
             if (data.mosque && data.mosque.slug) {
                 state.mosque = data.mosque;
             }
@@ -107,6 +111,7 @@
                 sound: state.sound,
                 voice: state.voice,
                 preAlertMinutes: state.preAlertMinutes,
+                theme: state.theme,
                 mosque: state.mosque,
                 overview: state.overview,
                 overviewFetchedAt: state.overviewFetchedAt,
@@ -461,6 +466,16 @@
 
     /* ----------------------------- screens --------------------------- */
 
+    var APP_VERSION = "1.1.4";
+    var THEMES = ["midnight", "emerald", "sapphire", "onyx", "ramadan"];
+
+    function applyTheme() {
+        if (THEMES.indexOf(state.theme) === -1) {
+            state.theme = "midnight";
+        }
+        document.documentElement.setAttribute("data-theme", state.theme);
+    }
+
     function applyLanguage() {
         document.documentElement.lang = state.language;
 
@@ -484,7 +499,7 @@
 
         var about = $("about-line");
         if (about) {
-            about.textContent = "Athan TV · v1.1.3";
+            about.textContent = "Athan TV · v" + APP_VERSION;
         }
 
         updateSettingsUi();
@@ -547,7 +562,6 @@
 
     function showSetup(step) {
         state.screen = "setup";
-        stopTicker();
         $("screen-setup").classList.remove("hidden");
         $("screen-dashboard").classList.add("hidden");
         closeOverlays();
@@ -657,7 +671,41 @@
 
     /* ------------------------------ search --------------------------- */
 
+    /* Search-as-you-type: every keystroke restarts a short debounce. The
+       country map is fetched once and cached locally (see mawaqit.js), so
+       matching is instant -- the network only serves the initial map. */
+    function scheduleLiveSearch() {
+        if (state.searchTimer) {
+            clearTimeout(state.searchTimer);
+            state.searchTimer = null;
+        }
+        if (state.screen !== "setup" || state.setupStep !== 3) {
+            return;
+        }
+        var input = $("mosque-search");
+        var query = input ? input.value.trim() : "";
+        if (query.length < 2) {
+            state.searchSeq++; // Invalidate any in-flight request.
+            state.searchTotal = null;
+            var box = $("mosque-results");
+            if (box) {
+                box.innerHTML = "";
+            }
+            setStatus("search-status", t("searchEmptyHint"), "");
+            return;
+        }
+        setStatus("search-status", t("searching"), "pending");
+        state.searchTimer = window.setTimeout(function () {
+            state.searchTimer = null;
+            performSearch();
+        }, 400);
+    }
+
     function performSearch() {
+        if (state.searchTimer) {
+            clearTimeout(state.searchTimer);
+            state.searchTimer = null;
+        }
         var input = $("mosque-search");
         var query = input ? input.value.trim() : "";
         if (query.length < 2) {
@@ -673,12 +721,19 @@
         state.searchTotal = null;
         $("mosque-results").innerHTML = "";
 
+        var seq = ++state.searchSeq;
         window.MawaqitData.search(state.country.code, query).then(function (payload) {
+            if (seq !== state.searchSeq) {
+                return; // A newer keystroke already superseded this result.
+            }
             netOk();
             state.searchTotal = payload.total || 0;
             renderMosqueResults(payload.results || []);
             setStatus("search-status", tpl("resultsCount", { n: payload.total || 0 }), "ok");
         }).catch(function (error) {
+            if (seq !== state.searchSeq) {
+                return;
+            }
             netError();
             state.searchTotal = null;
             setStatus("search-status", t("searchError") + " " + errorText(error), "error");
@@ -835,12 +890,9 @@
         $("next-countdown").textContent = "--:--:--";
         $("prayer-grid").innerHTML = "";
         $("jumua-bar").classList.add("hidden");
-        $("ticker").classList.add("hidden");
         $("clock-time").textContent = "--:--";
         $("clock-date").textContent = "";
         $("clock-hijri").textContent = "";
-        $("dash-updated").textContent = "";
-        $("dash-tz").textContent = "";
     }
 
     function renderDashboard() {
@@ -958,12 +1010,7 @@
             jumuaBar.classList.add("hidden");
         }
 
-        var timezone = mosque.timezone || "";
-        $("dash-tz").textContent = timezone;
-        $("dash-updated").textContent = state.overviewFetchedAt ? tpl("updated", { time: mosqueTimeString(state.overviewFetchedAt) }) : "";
-
         updateClock();
-        startTicker();
     }
 
     function updateClock() {
@@ -972,45 +1019,6 @@
         }
         var date = new Date((Date.now() - state.skewMs) + mosqueOffsetMs());
         $("clock-time").textContent = pad2(date.getUTCHours()) + ":" + pad2(date.getUTCMinutes());
-    }
-
-    /* ----------------------------- ticker ---------------------------- */
-
-    function startTicker() {
-        stopTicker();
-        var list = (state.overview && state.overview.announcements) || [];
-        var ticker = $("ticker");
-        if (!list.length) {
-            ticker.classList.add("hidden");
-            return;
-        }
-        ticker.classList.remove("hidden");
-        state.tickerIndex = 0;
-        showTickerItem();
-        state.tickerTimer = window.setInterval(function () {
-            state.tickerIndex = (state.tickerIndex + 1) % list.length;
-            showTickerItem();
-        }, 9000);
-    }
-
-    function stopTicker() {
-        if (state.tickerTimer) {
-            clearInterval(state.tickerTimer);
-            state.tickerTimer = null;
-        }
-    }
-
-    function showTickerItem() {
-        var list = (state.overview && state.overview.announcements) || [];
-        if (!list.length) {
-            return;
-        }
-        var item = list[state.tickerIndex % list.length];
-        var text = item.title || "";
-        if (item.content) {
-            text += (text ? " — " : "") + item.content;
-        }
-        $("ticker-text").textContent = text;
     }
 
     /* ------------------------------ tick ----------------------------- */
@@ -1170,6 +1178,9 @@
         if (state.overlay === "prayer") {
             return $("overlay-prayer");
         }
+        if (state.overlay === "support") {
+            return $("overlay-support");
+        }
         if (state.screen === "setup") {
             return $("screen-setup");
         }
@@ -1178,7 +1189,7 @@
 
     function openOverlay(name) {
         state.overlay = name;
-        var element = name === "settings" ? $("overlay-settings") : $("overlay-prayer");
+        var element = $("overlay-" + name);
         if (element) {
             element.classList.remove("hidden");
         }
@@ -1192,6 +1203,10 @@
         state.overlay = null;
         $("overlay-settings").classList.add("hidden");
         $("overlay-prayer").classList.add("hidden");
+        var support = $("overlay-support");
+        if (support) {
+            support.classList.add("hidden");
+        }
         clearTimeout(state.overlayTimer);
         stopAdhanAudio();
         if (state.screen === "dashboard") {
@@ -1228,6 +1243,14 @@
             var value = parseInt(button.getAttribute("data-pre"), 10);
             button.classList.toggle("is-active", value === state.preAlertMinutes);
         });
+
+        $$("#theme-seg [data-theme]").forEach(function (button) {
+            button.classList.toggle("is-active", button.getAttribute("data-theme") === state.theme);
+        });
+    }
+
+    function openSupport() {
+        openOverlay("support");
     }
 
     function openSettings() {
@@ -1450,17 +1473,14 @@
         });
 
         $("btn-search").addEventListener("click", performSearch);
+        $("mosque-search").addEventListener("input", scheduleLiveSearch);
         // Enter on mosque-search handled by global onKeyDown -> handleInputEnter.
-        // Duplicate inline listener removed to prevent double-search on keypress.
 
         $("btn-lang-setup").addEventListener("click", function () {
             setLanguage(state.language === "fr" ? "en" : "fr");
         });
         $("btn-settings-setup").addEventListener("click", openSettings);
 
-        $("btn-refresh").addEventListener("click", function () {
-            refreshOverview(true, true);
-        });
         $("btn-settings").addEventListener("click", openSettings);
         $("btn-close-settings").addEventListener("click", closeOverlays);
 
@@ -1472,6 +1492,19 @@
 
         $("toggle-notifications").addEventListener("click", function () {
             toggleSetting("notifications");
+        });
+        $("btn-test-notification").addEventListener("click", function () {
+            var wasOff = !state.notifications;
+            if (wasOff) {
+                state.notifications = true;
+            }
+            ensureAudio();
+            sendNotification("Athan TV", t("notifTestBody"));
+            if (wasOff) {
+                state.notifications = false;
+            }
+            showToast("Athan TV", t("notifSent"), 4000);
+            playChime(false);
         });
         $("toggle-sound").addEventListener("click", function () {
             toggleSetting("sound");
@@ -1487,6 +1520,18 @@
                 updateSettingsUi();
             });
         });
+
+        $$("#theme-seg [data-theme]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                state.theme = button.getAttribute("data-theme");
+                applyTheme();
+                saveState();
+                updateSettingsUi();
+            });
+        });
+
+        $("btn-support").addEventListener("click", openSupport);
+        $("btn-close-support").addEventListener("click", closeOverlays);
 
         $("btn-test-sound").addEventListener("click", function () {
             ensureAudio();
@@ -1522,6 +1567,7 @@
 
     function init() {
         loadState();
+        applyTheme();
         loadCountries();
         bindEvents();
         applyLanguage();
