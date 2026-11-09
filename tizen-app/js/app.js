@@ -467,7 +467,7 @@
 
     /* ----------------------------- screens --------------------------- */
 
-    var APP_VERSION = "1.1.5";
+    var APP_VERSION = "1.1.6";
     var THEMES = ["midnight", "emerald", "sapphire", "onyx", "oled", "ramadan"];
 
     function applyTheme() {
@@ -500,7 +500,15 @@
 
         var about = $("about-line");
         if (about) {
-            about.textContent = "Athan TV · v" + APP_VERSION;
+            // Diagnostics: actual web-engine drawing surface (UI) vs the panel
+            // size the system reports. Tells us whether raster is native 4K or
+            // a 1080p surface upscaled by the TV.
+            var dpr = window.devicePixelRatio || 1;
+            about.textContent = "Athan TV · v" + APP_VERSION +
+                " · UI " + window.innerWidth + "×" + window.innerHeight +
+                " · screen " + (window.screen && window.screen.width ?
+                    window.screen.width + "×" + window.screen.height : "?") +
+                " · dpr " + dpr;
         }
 
         updateSettingsUi();
