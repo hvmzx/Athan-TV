@@ -1,6 +1,25 @@
 /*
  * Builds an unsigned Tizen .wgt (a ZIP with config.xml at the root).
- * Usage: node tools/build-wgt.js
+ * Usage: node tools/build-wgt.js          → dist/athan-tv-<version>.wgt
+ *        node tools/build-wgt.js --probe  → dist/athan-tv-probe.wgt (3-file diagnostic)
+ *
+ * HARD RULES for tizen-app/config.xml — proven on-device (TV TQ65S90CA via
+ * Apps2Samsung v3.2.0-beta, Nov 2026). The TV rejects the install with
+ * "install failed[118, -4] Operation not allowed: Load archive info fail"
+ * for a manifest that is valid XML but breaks its loader:
+ *   - NO XML COMMENTS anywhere in config.xml. Both packages proven to install
+ *     on this TV (NuvioTV001, FreeMyTVio) ship a bare <?xml?> + <widget> file
+ *     with zero comments and zero non-ASCII; our byte-identical probe passed
+ *     only the build whose comment block was removed. Keep it that way —
+ *     document manifest rationale here or in README, never in the manifest.
+ *   - required_version must be <= the TV platform (we ship 2.3).
+ *   - background-support stays "disable" (partner-level when "enable").
+ *   - No http://tizen.org/feature/network.internet feature; access origin="*"
+ *     plus the internet privilege is what the working apps declare.
+ *   - After a failed [118] attempt the package id gets poisoned on the TV
+ *     (failed-install copies linger): every diagnosis round needs a FRESH id.
+ * Enforced below: buildPackage() refuses any config.xml with comments or
+ * non-ASCII bytes.
  */
 "use strict";
 
@@ -127,9 +146,34 @@ function readVersion(appDir) {
     return match ? match[1] : "1.0.0";
 }
 
-/* Probe package: byte-for-byte the same manifest DNA as the app, minimal
-   payload. If the install tool refuses even this, the problem is not the
-   app's content. */
+/* Samsung's TV manifest loader rejects commented config.xml files outright
+   ([118, -4] "Load archive info fail") even though they are valid XML.
+   Refuse to build such a package. */
+function assertManifestSafe(appDir) {
+    const file = path.join(appDir, "config.xml");
+    const bytes = fs.readFileSync(file);
+    const text = bytes.toString("utf8");
+    if (text.includes("<!--")) {
+        throw new Error(
+            "config.xml contains an XML comment. Samsung TV installers reject " +
+            "commented manifests with [118, -4]. Move commentary to README.md " +
+            "or the header comment of tools/build-wgt.js."
+        );
+    }
+    for (let i = 0; i < bytes.length; i++) {
+        if (bytes[i] > 0x7e) {
+            throw new Error(
+                "config.xml contains a non-ASCII byte (0x" + bytes[i].toString(16) + " at offset " + i + "). " +
+                "Proven-to-install manifests are pure ASCII; keep it that way."
+            );
+        }
+    }
+}
+
+/* Probe package: minimal payload sharing the app's manifest DNA. Installed
+   on-device Nov 2026: proved the manifest, the signer tool and the push path
+   were innocent while v1.1.1/v1.1.2 failed. Keep --probe around as a
+   canary/tie-breaker for future install-toolchain issues. */
 const PROBE_CONFIG = `<?xml version="1.0" encoding="UTF-8"?>
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="https://athantv.app/tizen" version="1.0.0" viewmodes="maximized">
     <tizen:application id="AthanProbe.AthanProbe" package="AthanProbe" required_version="2.3"/>
@@ -166,6 +210,7 @@ function stageProbe() {
 }
 
 function buildPackage(appDir, outName) {
+    assertManifestSafe(appDir);
     const version = readVersion(appDir);
     const files = walk(appDir, "");
 

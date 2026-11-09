@@ -391,7 +391,7 @@
                 if (appId) {
                     notificationDict.appId = appId;
                 } else {
-                    notificationDict.appId = "AthanTV.AthanTV";
+                    notificationDict.appId = "AthanTizen.AthanTizen";
                 }
                 if (window.tizen.ApplicationControl) {
                     try {
@@ -484,7 +484,7 @@
 
         var about = $("about-line");
         if (about) {
-            about.textContent = "Athan TV · v1.1.2";
+            about.textContent = "Athan TV · v1.1.3";
         }
 
         updateSettingsUi();

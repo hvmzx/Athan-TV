@@ -95,9 +95,16 @@ Build the Tizen widget archive:
 node tools\build-wgt.js
 ```
 
-Output: `dist/mawaqit-tv-1.1.0.wgt`
+Output: `dist/athan-tv-<version>.wgt` (the version comes from `tizen-app/config.xml`).
 
 > The custom builder ensures `config.xml` is the exact first entry in the ZIP directory as required by Samsung Tizen OS.
+
+> **Manifest gotcha (proven on-device):** the TV's package loader rejects
+> `config.xml` files that contain **XML comments** — even perfectly valid ones —
+> with `install failed [118, -4] Operation not allowed: Load archive info fail`.
+> Keep `config.xml` comments-free and pure ASCII; the build refuses
+> otherwise. After a failed `[118]` attempt the TV poisons that package id
+> (hidden copies), so re-tests need a fresh `package=` / `tizen:application id=`.
 
 ---
 
