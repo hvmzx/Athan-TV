@@ -44,6 +44,7 @@
         searchSeq: 0,
         testNotifTimer: null,
         theme: "midnight",
+        lastBackAt: 0,
         audioCtx: null
     };
 
@@ -912,24 +913,6 @@
         var arabicName = mosque.name && /[\u0600-\u06FF]/.test(mosque.name) ? mosque.name : "";
         $("mosque-arabic").textContent = arabicName;
 
-        var logo = $("mosque-logo");
-        var logoSrc = selected.image || mosque.image || mosque.logo || "";
-        logo.classList.remove("loaded");
-        logo.onload = function () {
-            logo.classList.add("loaded");
-        };
-        logo.onerror = function () {
-            logo.classList.remove("loaded");
-        };
-        if (logoSrc) {
-            logo.src = logoSrc;
-            if (logo.complete && logo.naturalWidth > 0) {
-                logo.classList.add("loaded");
-            }
-        } else {
-            logo.removeAttribute("src");
-        }
-
         var date = overview.date || {};
         $("clock-date").textContent = (date.gregorianDisplay && (date.gregorianDisplay[state.language] || date.gregorianDisplay.en)) || "";
         $("clock-hijri").textContent = (date.hijri && date.hijri.formatted && (date.hijri.formatted[state.language] || date.hijri.formatted.en)) || "";
@@ -1120,12 +1103,13 @@
         }
     }
 
-    function showPreAlert(prayer) {
+    function showPreAlert(prayer, minutes) {
         var name = prayerName(prayer.key);
-        showToast(tpl("preAlertTitle", { n: state.preAlertMinutes }),
+        var lead = minutes || state.preAlertMinutes;
+        showToast(tpl("preAlertTitle", { n: lead }),
             tpl("preAlertBody", { prayer: name, time: prayer.adhan }), 12000);
         playChime(false);
-        sendNotification(tpl("notifPreTitle", { n: state.preAlertMinutes }),
+        sendNotification(tpl("notifPreTitle", { n: lead }),
             tpl("notifPreBody", { prayer: name, time: prayer.adhan }));
         saveState();
     }
@@ -1140,6 +1124,9 @@
         $("overlay-mosque").textContent = mosqueLabel();
         $("overlay-iqama").textContent = state.prayerOverlayIqamaText;
 
+        // A reminder toast from just before the adhan must not sit on top of
+        // the full-screen prayer takeover.
+        hideToast();
         openOverlay("prayer");
         playAdhanAudio();
         speak(tpl("speechPrayer", { prayer: name }));
@@ -1357,29 +1344,59 @@
         return false;
     }
 
+    // Samsung remotes report keys in several ways: some models only set
+    // keyCode, others only key/keyName, and "Return" means OK (not Back).
+    // Normalise once so every handler below sees the same action.
+    function remoteKey(event) {
+        var name = String(event.key || event.keyName || "").toLowerCase();
+        var code = event.keyCode || event.which || 0;
+        if (name === "back" || name === "x f86back" || name === "x f86 back" ||
+            name === "goback" || code === 10009 || code === 461 || code === 27 || code === 8) {
+            return "back";
+        }
+        if (name === "return" || name === "enter" || name === "ok" || name === "accept" || code === 13) {
+            return "ok";
+        }
+        if (code >= 37 && code <= 40) {
+            return code;
+        }
+        return null;
+    }
+
     function onKeyDown(event) {
-        var code = event.keyCode || event.which;
+        var key = remoteKey(event);
 
         // The prayer moment is modal: OK/Back dismiss it and nothing behind it
         // may receive the key press.
         if (state.overlay === "prayer") {
-            if (code === 13 || code === 10009 || code === 461 || code === 27) {
+            if (key === "ok" || key === "back") {
                 event.preventDefault();
                 closeOverlays();
-            } else if (code >= 37 && code <= 40) {
+            } else if (key >= 37 && key <= 40) {
                 event.preventDefault();
             }
             return;
         }
 
-        if (code === 10009 || code === 461 || code === 27) {
+        if (key === "back") {
+            // Backspace must still delete characters in a text field, and a
+            // single remote press must not walk two screens at once.
+            if (event.keyCode === 8 && isTextInput(document.activeElement)) {
+                return;
+            }
+            var now = Date.now();
+            if (now - state.lastBackAt < 250) {
+                event.preventDefault();
+                return;
+            }
+            state.lastBackAt = now;
             if (handleBack()) {
                 event.preventDefault();
             }
             return;
         }
 
-        if (code === 13) {
+        if (key === "ok") {
             var active = document.activeElement;
             if (isTextInput(active)) {
                 event.preventDefault();
@@ -1394,16 +1411,16 @@
             return;
         }
 
-        if (code >= 37 && code <= 40) {
+        if (key >= 37 && key <= 40) {
             var focused = document.activeElement;
 
             // Text fields keep the cursor keys for editing, but TV users still
             // need a predictable way to reach the action next to the field.
             if (isTextInput(focused)) {
-                if (code === 37) {
+                if (key === 37) {
                     return;
                 }
-                if (code === 39) {
+                if (key === 39) {
                     if (focused.id === "mosque-search") {
                         event.preventDefault();
                         TvNav.focus($("btn-search"));
@@ -1411,7 +1428,7 @@
                     }
                     return;
                 }
-                if (code === 40) {
+                if (key === 40) {
                     if (focused.id === "country-filter") {
                         var firstCountry = $("country-grid").querySelector(".country-chip");
                         if (firstCountry) {
@@ -1430,7 +1447,7 @@
             }
 
             event.preventDefault();
-            TvNav.move(activeScope(), code);
+            TvNav.move(activeScope(), key);
         }
     }
 
