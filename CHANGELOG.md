@@ -4,6 +4,7 @@
 
 ### Features
 
+- Add Arabic interface language
 - Build wgt in CI and generate changelogs
 - Show rendering diagnostics in settings
 - Add an OLED theme and donation QR
