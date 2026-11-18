@@ -14,7 +14,7 @@
 
     var state = {
         netStatus: "unknown",
-        language: "fr",
+        language: "en",
         notifications: true,
         sound: true,
         voice: false,
