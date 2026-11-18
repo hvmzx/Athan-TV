@@ -1433,3 +1433,17 @@ html[data-theme="oled"] .overlay {
 html[data-theme="oled"] .prayer-card.is-shuruq .prayer-adhan {
     color: #d6d6d6;
 }
+
+/* ============================== RTL ============================== */
+html[dir="rtl"] {
+    font-family: "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+html[dir="rtl"] .mosque-result {
+    text-align: right;
+}
+
+html[dir="rtl"] .clock-block,
+html[dir="rtl"] .next-right {
+    text-align: left;
+}

@@ -34,13 +34,16 @@
 
     var WEEKDAYS = {
         en: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-        fr: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
+        fr: ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
+        ar: ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"]
     };
     var MONTHS = {
         en: ["January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"],
         fr: ["janvier", "février", "mars", "avril", "mai", "juin",
-            "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
+            "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
+        ar: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+            "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"]
     };
     var HIJRI_MONTHS = {
         en: ["Muharram", "Safar", "Rabi al-Awwal", "Rabi al-Thani",
@@ -890,7 +893,8 @@
         var weekday = (new Date(Date.UTC(year, month - 1, day)).getUTCDay() + 6) % 7;
         return {
             en: WEEKDAYS.en[weekday] + " " + day + " " + MONTHS.en[month - 1] + " " + year,
-            fr: WEEKDAYS.fr[weekday] + " " + day + " " + MONTHS.fr[month - 1] + " " + year
+            fr: WEEKDAYS.fr[weekday] + " " + day + " " + MONTHS.fr[month - 1] + " " + year,
+            ar: WEEKDAYS.ar[weekday] + " " + day + " " + MONTHS.ar[month - 1] + " " + year
         };
     }
 

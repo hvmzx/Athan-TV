@@ -10,7 +10,7 @@ Standalone prayer-times app for Samsung Tizen TVs, powered by [mawaqit.net](http
 - **Jumu'ah** – Friday prayer times shown on the dashboard alongside the six daily prayers and announcements.
 - **Adhan notification** – full-screen reminder with adhan audio at each prayer, optional 5/10/15-minute pre-alert, and a Tizen notification banner.
 
-No server or computer is needed: the TV fetches the mosque data directly.
+No server or computer is needed: the TV fetches the mosque data directly. Interface available in English, Français and العربية (RTL).
 
 ## Sign and install on your Samsung TV
 

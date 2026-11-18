@@ -70,7 +70,7 @@
             }
             var data = JSON.parse(raw);
 
-            if (data.language === "fr" || data.language === "en") {
+            if (data.language === "fr" || data.language === "en" || data.language === "ar") {
                 state.language = data.language;
             }
             if (typeof data.notifications === "boolean") {
@@ -164,11 +164,32 @@
         return t("prayer_" + key);
     }
 
+    var arCountryDisplay = null;
+
+    // The bundled country directory has English/French names only. Modern
+    // browsers can localise the ISO code; older Tizen web engines simply
+    // fall back to English.
+    function arabicCountryName(code) {
+        try {
+            if (arCountryDisplay === null) {
+                arCountryDisplay = (window.Intl && window.Intl.DisplayNames) ?
+                    new window.Intl.DisplayNames(["ar"], { type: "region" }) : false;
+            }
+            return arCountryDisplay ? arCountryDisplay.of(code) : null;
+        } catch (error) {
+            return null;
+        }
+    }
+
     function countryName(country) {
         if (!country) {
             return "";
         }
-        return (country.name && (country.name[state.language] || country.name.en)) || country.code;
+        var local = country.name && country.name[state.language];
+        if (state.language === "ar" && !local) {
+            local = arabicCountryName(country.code);
+        }
+        return local || (country.name && country.name.en) || country.code;
     }
 
     function normalizeText(value) {
@@ -366,7 +387,8 @@
                 return;
             }
             var utterance = new window.SpeechSynthesisUtterance(text);
-            utterance.lang = state.language === "fr" ? "fr-FR" : "en-US";
+            utterance.lang = state.language === "fr" ? "fr-FR" :
+                (state.language === "ar" ? "ar-SA" : "en-US");
             utterance.rate = 0.92;
             utterance.pitch = 1;
             window.speechSynthesis.cancel();
@@ -480,6 +502,7 @@
 
     function applyLanguage() {
         document.documentElement.lang = state.language;
+        document.documentElement.dir = state.language === "ar" ? "rtl" : "ltr";
 
         $$("[data-i18n]").forEach(function (element) {
             element.textContent = t(element.getAttribute("data-i18n"));
@@ -496,7 +519,9 @@
 
         var langButton = $("btn-lang-setup");
         if (langButton) {
-            langButton.textContent = state.language === "fr" ? "EN" : "FR";
+            // FR → EN → AR → FR
+            langButton.textContent = state.language === "fr" ? "EN" :
+                (state.language === "en" ? "AR" : "FR");
         }
 
         var about = $("about-line");
@@ -605,7 +630,8 @@
             list = list.filter(function (country) {
                 return normalizeText(country.code).indexOf(filter) !== -1 ||
                     normalizeText(country.name && country.name.en).indexOf(filter) !== -1 ||
-                    normalizeText(country.name && country.name.fr).indexOf(filter) !== -1;
+                    normalizeText(country.name && country.name.fr).indexOf(filter) !== -1 ||
+                    normalizeText(arabicCountryName(country.code)).indexOf(filter) !== -1;
             }).slice(0, 60);
         } else if (!state.showAllCountries) {
             list = list.slice(0, 30);
@@ -1244,7 +1270,7 @@
     }
 
     function setLanguage(language) {
-        if (language !== "fr" && language !== "en") {
+        if (language !== "fr" && language !== "en" && language !== "ar") {
             return;
         }
         state.language = language;
@@ -1480,7 +1506,8 @@
         // Enter on mosque-search handled by global onKeyDown -> handleInputEnter.
 
         $("btn-lang-setup").addEventListener("click", function () {
-            setLanguage(state.language === "fr" ? "en" : "fr");
+            setLanguage(state.language === "fr" ? "en" :
+                (state.language === "en" ? "ar" : "fr"));
         });
         $("btn-settings-setup").addEventListener("click", openSettings);
 
