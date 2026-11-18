@@ -14,10 +14,10 @@ No server or computer is needed: the TV fetches the mosque data directly.
 
 ## Sign and install on your Samsung TV
 
-GitHub Actions builds an unsigned `athan-tv-0.1.0.wgt` (also attached to the `v0.1.0` release). Sign it with your Samsung certificate profile in Tizen Studio, then install with:
+GitHub Actions builds an unsigned `AthanTV.wgt` (also attached to the `v0.1.0` release). Sign it with your Samsung certificate profile in Tizen Studio, then install with:
 
 ```powershell
-sdb install dist\athan-tv-0.1.0.wgt
+sdb install dist\AthanTV.wgt
 ```
 
 You can also install the signed package manually with **App2Samsung**. The app is **not yet available in the TV app store**.

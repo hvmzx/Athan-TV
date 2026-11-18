@@ -1,6 +1,6 @@
 /*
  * Builds an unsigned Tizen .wgt (a ZIP with config.xml at the root).
- * Usage: node tools/build-wgt.js          → dist/athan-tv-<version>.wgt
+ * Usage: node tools/build-wgt.js          → dist/AthanTV.wgt (fixed release name)
  *        node tools/build-wgt.js --probe  → dist/athan-tv-probe.wgt (3-file diagnostic)
  *        node tools/build-wgt.js --bg     → dist/athan-tv-bg-1.2.0.wgt (sacrificial
  *                                          experiment package: fresh id +
@@ -296,7 +296,7 @@ function buildPackage(appDir, outName) {
     });
 
     fs.mkdirSync(DIST_DIR, { recursive: true });
-    const output = path.join(DIST_DIR, outName || "athan-tv-" + version + ".wgt");
+    const output = path.join(DIST_DIR, outName || "AthanTV.wgt");
     fs.writeFileSync(output, buildZip(files));
     verifyZip(output, files);
 

@@ -42,7 +42,7 @@ jobs:
 
       - name: Checksum the package
         run: |
-          WGT=$(ls dist/*.wgt)
+          WGT=dist/AthanTV.wgt
           sha256sum "$WGT" > "$WGT.sha256"
           echo "WGT=$WGT" >> "$GITHUB_ENV"
 
@@ -51,8 +51,8 @@ jobs:
         with:
           name: athan-tv-wgt-${{ github.run_number }}
           path: |
-            dist/*.wgt
-            dist/*.sha256
+            dist/AthanTV.wgt
+            dist/AthanTV.wgt.sha256
             CHANGELOG.md
           if-no-files-found: error
 
@@ -65,4 +65,4 @@ jobs:
           if ! gh release view "$TAG" >/dev/null 2>&1; then
             gh release create "$TAG" --title "$TAG" --notes-file CHANGELOG.md
           fi
-          gh release upload "$TAG" dist/*.wgt dist/*.sha256 --clobber
+          gh release upload "$TAG" dist/AthanTV.wgt dist/AthanTV.wgt.sha256 --clobber
