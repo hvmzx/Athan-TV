@@ -30,4 +30,4 @@ node tools\build-wgt.js         # build the unsigned .wgt
 node tools\changelog.js         # regenerate CHANGELOG.md from commits
 ```
 
-Version: **0.1.0** · [Changelog](CHANGELOG.md)
+Version: **0.1.0** · [Changelog](CHANGELOG.md) · [MIT License](LICENSE)
