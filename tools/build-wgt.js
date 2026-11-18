@@ -246,6 +246,43 @@ function stageBg() {
     return dir;
 }
 
+// Borrowed from the Nuvio/free-my-tv Tizen packagers: never trust a build
+// until the archive itself has been read back and checked.
+function verifyZip(output, files) {
+    const buf = fs.readFileSync(output);
+    const local = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
+    if (!buf.subarray(0, 4).equals(local)) {
+        throw new Error("Bad ZIP: missing local file header");
+    }
+    if (buf.toString("utf8", 30, 30 + "config.xml".length) !== "config.xml") {
+        throw new Error("Bad ZIP: config.xml is not the first entry");
+    }
+
+    const eocd = buf.lastIndexOf(Buffer.from([0x50, 0x4b, 0x05, 0x06]));
+    if (eocd === -1) {
+        throw new Error("Bad ZIP: missing end-of-central-directory record");
+    }
+    const count = buf.readUInt16LE(eocd + 10);
+    let offset = buf.readUInt32LE(eocd + 16);
+    const names = new Set();
+    for (let i = 0; i < count; i++) {
+        if (buf.readUInt32LE(offset) !== 0x02014b50) {
+            throw new Error("Bad ZIP: corrupt central directory at entry " + i);
+        }
+        const nameLength = buf.readUInt16LE(offset + 28);
+        const extraLength = buf.readUInt16LE(offset + 30);
+        const commentLength = buf.readUInt16LE(offset + 32);
+        names.add(buf.toString("utf8", offset + 46, offset + 46 + nameLength));
+        offset += 46 + nameLength + extraLength + commentLength;
+    }
+
+    const expected = files.map((file) => file.name).sort();
+    const actual = [...names].sort();
+    if (count !== expected.length || expected.some((name, i) => name !== actual[i])) {
+        throw new Error("Bad ZIP: archive contents do not match the staged files");
+    }
+}
+
 function buildPackage(appDir, outName) {
     assertManifestSafe(appDir);
     const version = readVersion(appDir);
@@ -261,6 +298,7 @@ function buildPackage(appDir, outName) {
     fs.mkdirSync(DIST_DIR, { recursive: true });
     const output = path.join(DIST_DIR, outName || "athan-tv-" + version + ".wgt");
     fs.writeFileSync(output, buildZip(files));
+    verifyZip(output, files);
 
     const size = fs.statSync(output).size;
     console.log("Built " + output);

@@ -14,9 +14,9 @@ Off* (Eco) mode and the full sound + notification experience keeps running with 
 
 ## Features
 
-- **100% Standalone (v1.1.0)** – Runs directly on your Samsung TV. No computer, server, or Docker container to run on your local network.
+- **100% Standalone (v0.1.0)** – Runs directly on your Samsung TV. No computer, server, or Docker container to run on your local network.
 - **Mosque Picker** – Browse 156 countries and search among thousands of mosques by name, city, address, or postal code. Results update live as you type (the country map is cached locally, so typing costs almost no bandwidth).
-- **TV Dashboard** – Mosque logo and name, mosque-local clock, Gregorian + Hijri dates, next-prayer countdown, six prayer cards (Fajr, Shuruq, Dhuhr, Asr, Maghrib, Isha) and Iqama times.
+- **TV Dashboard** – Mosque name, mosque-local clock, Gregorian + Hijri dates, next-prayer countdown, six prayer cards (Fajr, Shuruq, Dhuhr, Asr, Maghrib, Isha) and Iqama times. No mosque logo: text only, so the header stays calm and burn-in friendly.
 - **Jumu'ah & Announcements** – Displays up to three Jumu'ah prayer times and an announcement ticker.
 - **Adhan & Notifications** (all fire while Athan TV is on screen — see *Audio & Notifications*):
   - **On screen**: Full-screen modal takeover with the glowing crescent, mosque name, Iqama countdown, and real Adhan audio playback (`adan.mp3**), plus a native Tizen notification banner. Dismiss anytime with **OK** or **BACK**.
@@ -26,7 +26,7 @@ Off* (Eco) mode and the full sound + notification experience keeps running with 
 - **Remote-First UI** – Bespoke 2D spatial navigation for D-pad arrows, Samsung BACK (`10009`), LG Back (`461`), and OK (`13`).
 - **Offline Tolerant** – Cached in `localStorage`; mosque timezones and DST transitions are handled internally.
 - **Bilingual** – French & English interface (French by default).
-- **Themes** – Six dark colour themes (Midnight, Emerald, Sapphire, Pitch black, **OLED B&W** monochrome on pure `#000`, Ramadan), selectable in Settings. Themes work purely through CSS variables on `<html data-theme="…">`.
+- **Themes** – Six dark colour themes (Midnight, Emerald, Sapphire, Pitch black, **OLED B&W** monochrome on pure `#000`, Ramadan), selectable in Settings. Themes work purely through CSS variables on `<html data-theme="…">`. OLED forces every colour — including status dots, badges, images and one-off accents — to black/white/gray.
 - **Support Mawaqit** – The PayPal donation QR code for the Mawaqit platform (that powers the data) is shown directly in Settings.
 
 ---
@@ -102,9 +102,10 @@ Build the Tizen widget archive:
 node tools\build-wgt.js
 ```
 
-Output: `dist/athan-tv-<version>.wgt` (the version comes from `tizen-app/config.xml`).
+Output: `dist/athan-tv-<version>.wgt` (the version comes from `tizen-app/config.xml`, currently `0.1.0`).
+The builder reads the archive back and verifies the entry list, including `config.xml` as the first ZIP entry as required by Samsung Tizen OS.
 
-> The custom builder ensures `config.xml` is the exact first entry in the ZIP directory as required by Samsung Tizen OS.
+GitHub Actions does the same build on every push and on `v*` tags: it uploads the `.wgt`, its SHA-256 checksum and the changelog as a build artifact (and attaches them to the tag's GitHub release). Only signing and installing happen locally.
 
 > **Manifest gotcha (proven on-device):** the TV's package loader rejects
 > `config.xml` files that contain **XML comments** — even perfectly valid ones —
@@ -175,13 +176,13 @@ Samsung TVs only install packages signed with an authorized Samsung Certificate.
 Using the Tizen Studio CLI terminal:
 
 ```powershell
-tizen package -t wgt -s MawaqitTV -- dist\mawaqit-tv-1.1.0.wgt
+tizen package -t wgt -s MawaqitTV -- dist\athan-tv-0.1.0.wgt
 ```
 
 ### Install onto the TV
 
 ```powershell
-sdb install dist\mawaqit-tv-1.1.0.wgt
+sdb install dist\athan-tv-0.1.0.wgt
 ```
 
 The **Mawaqit TV** icon will now appear in your TV's apps ribbon!
@@ -226,6 +227,36 @@ Press the **Réglages / Settings** button on the bottom right of the dashboard t
 - **Son**: Turn audio On/Off and test the adhan sound.
 - **Soutenir Mawaqit**: The PayPal donation QR code for the Mawaqit platform, displayed directly in the settings.
 - **Changer de mosquée**: Pick a different mosque without losing your settings.
+
+---
+
+## 6. Changelog & Versioning
+
+The first release of this project is **0.1.0** (tag `v0.1.0`). `CHANGELOG.md` is
+generated from the Conventional Commits between two version tags — only `feat:`
+and `fix:` commits appear, grouped under **Features** and **Fixes**:
+
+```powershell
+node tools\changelog.js            # version from config.xml, commits since the last v* tag
+node tools\changelog.js 0.2.0      # preview/regenerate a specific section
+node tools\changelog.js 0.1.0 --from root   # the first release includes all commits
+```
+
+The GitHub Actions workflow regenerates the changelog on every build and
+attaches it to the release for a `v*` tag.
+
+### Commit convention
+
+Every commit is a single line with no body:
+
+```text
+feat: live mosque search while typing
+fix: keep reminder toast clear of the prayer overlay
+chore: normalize line endings
+```
+
+Use `feat:` for new behaviour, `fix:` for bug fixes and `chore:`/`docs:`/`refactor:`
+for work that should not appear in the changelog.
 
 ---
 
