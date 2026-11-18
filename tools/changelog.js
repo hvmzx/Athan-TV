@@ -41,6 +41,9 @@ function tags() {
 }
 
 function previousRef(version, fromFlag) {
+    if (fromFlag === "root") {
+        return git(["rev-list", "--max-parents=0", "HEAD"]).split("\n")[0];
+    }
     if (fromFlag) {
         return fromFlag;
     }
@@ -53,7 +56,13 @@ function previousRef(version, fromFlag) {
 }
 
 function subjects(range) {
-    const output = git(["log", "--no-merges", "--pretty=format:%s", range + "..HEAD"]);
+    const args = ["log", "--no-merges", "--pretty=format:%s"];
+    const roots = git(["rev-list", "--max-parents=0", "HEAD"]).split("\n");
+    // A range of "root..HEAD" silently drops the initial commit.
+    if (roots.indexOf(range) === -1) {
+        args.push(range + "..HEAD");
+    }
+    const output = git(args);
     return output ? output.split("\n").map((line) => line.trim()).filter(Boolean) : [];
 }
 
