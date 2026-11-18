@@ -12,6 +12,7 @@
 
 ### Fixes
 
+- Default interface language to English
 - Read app version from the widget manifest tag
 - Resolve root ref when generating the first changelog
 - Make OLED theme monochrome and drop mosque logo
