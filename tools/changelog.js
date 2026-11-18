@@ -25,7 +25,7 @@ function git(args) {
 
 function configVersion() {
     const xml = fs.readFileSync(path.join(ROOT, "tizen-app", "config.xml"), "utf8");
-    const match = xml.match(/\bversion="([^"]+)"/);
+    const match = /<widget[^>]*\sversion="([^"]+)"/.exec(xml);
     if (!match) {
         throw new Error("Could not read version from tizen-app/config.xml");
     }
