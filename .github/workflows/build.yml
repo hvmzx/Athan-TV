@@ -33,7 +33,12 @@ jobs:
         run: node tools/build-wgt.js
 
       - name: Refresh changelog from conventional commits
-        run: node tools/changelog.js
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            node tools/changelog.js "${GITHUB_REF_NAME#v}"
+          else
+            node tools/changelog.js
+          fi
 
       - name: Checksum the package
         run: |
