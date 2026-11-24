@@ -30,4 +30,8 @@ node tools\build-wgt.js         # build the unsigned .wgt
 node tools\changelog.js         # regenerate CHANGELOG.md from commits
 ```
 
+## Background adhan on rooted TVs
+
+On a Samsung TV rooted with [Vetro](https://github.com/andrearicci93/vetro), the optional [Athan TV Alarm Shard](vetro-shard/README.md) acts as an always-on background alarm: it launches the widget at every adhan even when the app is closed. Not needed for normal installs, and not available on unrooted or Tizen 10 TVs.
+
 Version: **0.1.0** · [Changelog](CHANGELOG.md) · [MIT License](LICENSE)

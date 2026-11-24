@@ -1,0 +1,11 @@
+{
+    "id": "athan-alarm",
+    "apiVersion": 1,
+    "name": "Athan TV Alarm",
+    "version": "0.1.0",
+    "description": "Background adhan alarm: launches Athan TV at each prayer time, even when the app is closed.",
+    "author": "hvmzx",
+    "permissions": ["exec"],
+    "main": "index.js",
+    "ui": { "label": "Athan TV" }
+}
