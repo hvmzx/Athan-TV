@@ -29,8 +29,14 @@ jobs:
             node --check "$file"
           done
 
+      - name: Test the Vetro Shard
+        run: node tools/test-vetro-shard.js
+
       - name: Build unsigned Tizen widget
         run: node tools/build-wgt.js
+
+      - name: Build Vetro Shard bundle
+        run: node tools/build-vetro-shard.js
 
       - name: Refresh changelog from conventional commits
         run: |
@@ -43,7 +49,9 @@ jobs:
       - name: Checksum the package
         run: |
           WGT=dist/AthanTV.wgt
+          SHARD=dist/athan-alarm.vplugin
           sha256sum "$WGT" > "$WGT.sha256"
+          sha256sum "$SHARD" > "$SHARD.sha256"
           echo "WGT=$WGT" >> "$GITHUB_ENV"
 
       - name: Upload build artifact
@@ -53,6 +61,8 @@ jobs:
           path: |
             dist/AthanTV.wgt
             dist/AthanTV.wgt.sha256
+            dist/athan-alarm.vplugin
+            dist/athan-alarm.vplugin.sha256
             CHANGELOG.md
           if-no-files-found: error
 
@@ -67,4 +77,5 @@ jobs:
           else
             gh release edit "$TAG" --notes-file CHANGELOG.md
           fi
-          gh release upload "$TAG" dist/AthanTV.wgt dist/AthanTV.wgt.sha256 --clobber
+          gh release upload "$TAG" dist/AthanTV.wgt dist/AthanTV.wgt.sha256 \
+            dist/athan-alarm.vplugin dist/athan-alarm.vplugin.sha256 --clobber
