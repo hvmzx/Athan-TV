@@ -4,6 +4,7 @@
 
 ### Features
 
+- Add Vetro Shard background adhan alarm
 - Add Arabic interface language
 - Build wgt in CI and generate changelogs
 - Show rendering diagnostics in settings
